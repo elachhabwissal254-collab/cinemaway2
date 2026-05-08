@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>CINEMAWAY — Production Agency · Marrakech</title>
+<meta name="description" content="CINEMAWAY — Agence de production audiovisuelle à Marrakech. Films publicitaires, documentaires, montage professionnel.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#C9922A;--gold-lt:#E8B455;--gold-dim:rgba(201,146,42,.12);--gold-g:rgba(201,146,42,.28);
+  --bg:#0E0E0F;--bg2:#141416;--bg3:#1A1A1D;--bg4:#202023;
+  --brd:rgba(255,255,255,.07);--brd-g:rgba(201,146,42,.28);
+  --tx:#F0EBE3;--tx2:#9B9690;--tx3:#5A5753;
+  --sw:248px;--nh:64px;--r:10px;--rl:16px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}
+a{text-decoration:none;color:inherit}button{cursor:pointer;font-family:inherit;border:none;background:none}
+input,select,textarea{font-family:inherit}
+::-webkit-scrollbar{width:3px;height:3px}::-webkit-scrollbar-thumb{background:var(--gold);border-radius:2px}
+.hidden{display:none!important}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 24px;font-size:13px;font-weight:400;border-radius:var(--r);cursor:pointer;transition:all .2s;letter-spacing:.3px;border:none}
+.btn-gold{background:var(--gold);color:#0E0E0F}.btn-gold:hover{background:var(--gold-lt);transform:translateY(-1px);box-shadow:0 4px 18px rgba(201,146,42,.3)}
+.btn-ghost{background:transparent;border:1px solid var(--brd-g);color:var(--gold)}.btn-ghost:hover{background:var(--gold-dim)}
+.btn-dark{background:var(--bg4);color:var(--tx2);border:1px solid var(--brd)}.btn-dark:hover{color:var(--tx);border-color:rgba(255,255,255,.15)}
+.btn-sm{padding:7px 16px;font-size:12px}.btn-full{width:100%;justify-content:center}
+.btn-danger{background:rgba(220,53,69,.12);color:#dc3545;border:1px solid rgba(220,53,69,.2)}.btn-danger:hover{background:rgba(220,53,69,.22)}
+.btn-green{background:rgba(40,167,69,.12);color:#28a745;border:1px solid rgba(40,167,69,.2)}
+
+/* Badges */
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500}
+.bp{background:rgba(255,193,7,.12);color:#ffc107}.bs{background:rgba(23,162,184,.12);color:#17a2b8}
+.be{background:rgba(201,146,42,.15);color:var(--gold)}.br{background:rgba(111,66,193,.12);color:#9b6dff}
+.bd{background:rgba(40,167,69,.12);color:#28a745}.bc{background:rgba(220,53,69,.12);color:#dc3545}
+
+/* Card */
+.card{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--rl);overflow:hidden}
+.cp{padding:24px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx2);margin-bottom:8px}
+.field input,.field select,.field textarea{width:100%;background:var(--bg3);border:1px solid var(--brd);color:var(--tx);padding:11px 15px;border-radius:var(--r);font-size:14px;font-weight:300;transition:border-color .2s;outline:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold)}
+.field select option{background:var(--bg2)}.field textarea{resize:vertical;min-height:90px}
+.fmsg{padding:10px 14px;border-radius:var(--r);font-size:13px;margin-bottom:14px;display:none}
+.fmsg.err{background:rgba(220,53,69,.1);color:#dc3545;border:1px solid rgba(220,53,69,.2);display:block}
+.fmsg.ok{background:rgba(40,167,69,.1);color:#28a745;border:1px solid rgba(40,167,69,.2);display:block}
+.prog{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden}
+.prog-f{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-lt));border-radius:2px;transition:width .6s}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+/* Toast */
+#tw{position:fixed;bottom:22px;right:22px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--r);padding:11px 17px;font-size:13px;min-width:230px;display:flex;align-items:center;gap:10px;animation:tin .3s ease;pointer-events:all}
+.toast.ok{border-color:rgba(40,167,69,.4)}.toast.err{border-color:rgba(220,53,69,.4)}.toast.info{border-color:var(--brd-g)}
+@keyframes tin{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+
+/* ══ LANDING ══ */
+#vl{display:block}
+.tnav{position:fixed;top:0;left:0;right:0;height:var(--nh);z-index:300;display:flex;align-items:center;justify-content:space-between;padding:0 52px;background:rgba(14,14,15,.95);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.04)}
+.tlogo{font-family:'Playfair Display',serif;font-size:16px;letter-spacing:4px;color:var(--gold);display:flex;align-items:center;gap:10px}
+.tlogo svg{width:32px;height:32px;flex-shrink:0}
+.tlt span{display:block;font-size:7.5px;letter-spacing:4px;font-family:'DM Sans',sans-serif;color:var(--tx3);font-weight:300;margin-top:1px}
+.tnav-l{display:flex;align-items:center;gap:32px}
+.tnav-l a{font-size:13px;color:var(--tx2);letter-spacing:.3px;transition:color .2s}.tnav-l a:hover{color:var(--tx)}
+.tnav-r{display:flex;align-items:center;gap:10px}
+.hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding:calc(var(--nh)+64px) 52px 96px}
+.hbg{position:absolute;inset:0;background:linear-gradient(105deg,var(--bg) 32%,rgba(26,16,4,.9) 60%,rgba(14,14,15,.4) 100%);z-index:1}
+.hbg2{position:absolute;inset:0;background:linear-gradient(135deg,#0e0e0f 0%,#1a1208 40%,#0f1520 70%,#0e0e0f 100%);z-index:0}
+.hc{position:relative;z-index:2;max-width:660px}
+.hey{display:inline-flex;align-items:center;gap:10px;background:var(--gold-dim);border:1px solid var(--brd-g);padding:6px 16px;border-radius:20px;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:30px}
+.hey::before{content:'●';font-size:5px;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(46px,6.5vw,88px);font-weight:400;line-height:1.05;margin-bottom:24px}
+.hero h1 em{color:var(--gold);font-style:italic}
+.hsub{font-size:15px;color:var(--tx2);line-height:1.9;margin-bottom:42px;max-width:500px}
+.hcta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:52px}
+.hcli{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.hcli-l{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3)}
+.hcli-tags{display:flex;gap:10px;flex-wrap:wrap}
+.ctag{font-size:11px;color:var(--tx2);background:var(--bg3);border:1px solid var(--brd);padding:4px 12px;border-radius:20px;white-space:nowrap;transition:all .2s}
+.ctag:hover{border-color:var(--brd-g);color:var(--gold)}
+
+/* Stats strip */
+.ss{background:var(--bg2);border-top:1px solid var(--brd);border-bottom:1px solid var(--brd);padding:28px 52px;display:flex;align-items:center;justify-content:space-around;flex-wrap:wrap;gap:20px}
+.ssi .val{font-family:'Playfair Display',serif;font-size:40px;color:var(--gold);line-height:1;text-align:center}
+.ssi .lbl{font-size:10px;letter-spacing:1.5px;color:var(--tx3);text-transform:uppercase;text-align:center;margin-top:5px}
+
+/* Section */
+.sec{padding:88px 52px}
+.sec-alt{background:var(--bg2)}
+.ey{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.ey::before{content:'';width:26px;height:1px;background:var(--gold)}
+.sh{font-family:'Playfair Display',serif;font-size:clamp(32px,4.5vw,56px);font-weight:400;line-height:1.08;margin-bottom:12px}
+.shsub{font-size:15px;color:var(--tx2);line-height:1.85;max-width:540px}
+
+/* Portfolio */
+.po-g{display:grid;grid-template-columns:repeat(2,1fr);gap:4px;margin-top:48px}
+.po-item{position:relative;overflow:hidden;cursor:pointer;aspect-ratio:16/9}
+.po-item img{width:100%;height:100%;object-fit:cover;transition:transform .6s,filter .4s;filter:brightness(.8)}
+.po-item:hover img{transform:scale(1.05);filter:brightness(.55)}
+.po-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.88) 0%,transparent 55%);opacity:0;transition:opacity .35s;display:flex;align-items:flex-end;padding:26px}
+.po-item:hover .po-ov{opacity:1}
+.po-cat{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:5px}
+.po-name{font-family:'Playfair Display',serif;font-size:20px;font-weight:400}
+.po-desc{font-size:12px;color:var(--tx2);margin-top:3px}
+.po-big{grid-column:span 2;aspect-ratio:21/9}
+
+/* Services */
+.svc-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(275px,1fr));gap:16px;margin-top:48px}
+.svc-card{background:var(--bg3);border:1px solid var(--brd);border-radius:var(--rl);overflow:hidden;transition:transform .3s,border-color .3s;cursor:pointer}
+.svc-card:hover{transform:translateY(-4px);border-color:var(--brd-g)}
+.svc-th{height:152px;display:flex;align-items:center;justify-content:center;font-size:40px}
+.t1{background:linear-gradient(135deg,#1a1208,#3d2a06)}.t2{background:linear-gradient(135deg,#0a1020,#162340)}
+.t3{background:linear-gradient(135deg,#180810,#2d1020)}.t4{background:linear-gradient(135deg,#071510,#0f2a20)}
+.t5{background:linear-gradient(135deg,#1a0e06,#30220c)}.t6{background:linear-gradient(135deg,#0f0f1a,#20202e)}
+.svc-b{padding:16px}
+.svc-cat{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:5px}
+.svc-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:400;margin-bottom:6px}
+.svc-desc{font-size:12px;color:var(--tx2);line-height:1.65;margin-bottom:12px}
+.svc-price{font-size:12px;color:var(--tx2);display:flex;justify-content:space-between;align-items:center}
+.svc-price strong{color:var(--gold)}
+
+/* Packs */
+.pack-g{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px}
+.pack{background:var(--bg3);border:1px solid var(--brd);border-radius:var(--rl);padding:30px;position:relative;transition:transform .3s}
+.pack:hover{transform:translateY(-3px)}
+.pack::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--brd)}
+.pack.feat{border-color:var(--brd-g)}.pack.feat::before{background:linear-gradient(90deg,var(--gold),var(--gold-lt))}
+.phot{position:absolute;top:16px;right:16px;background:var(--gold);color:#0E0E0F;font-size:8px;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:20px}
+.pname{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--tx2);margin-bottom:10px}
+.pprice{font-family:'Playfair Display',serif;font-size:30px;margin-bottom:3px}
+.pprice span{font-size:13px;font-family:'DM Sans',sans-serif;color:var(--tx2);font-weight:300}
+.pdesc{font-size:13px;color:var(--tx2);margin:12px 0 18px;line-height:1.75}
+.pfeats{list-style:none;margin-bottom:22px}
+.pfeats li{font-size:13px;color:var(--tx2);padding:6px 0;border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:9px}
+.pfeats li::before{content:'✓';color:var(--gold);font-size:10px;flex-shrink:0;font-weight:700}
+
+/* Clients */
+.cli-g{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px;margin-top:48px}
+.cli-logo{background:var(--bg3);border:1px solid var(--brd);border-radius:var(--r);padding:13px 24px;font-size:13px;color:var(--tx2);transition:all .22s;letter-spacing:.4px}
+.cli-logo:hover{border-color:var(--brd-g);color:var(--gold);transform:translateY(-2px)}
+
+
+/* Contact */
+.cont-g{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:48px;align-items:start}
+.ci-row{display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--brd)}
+.ci-ico{font-size:17px;width:22px;text-align:center;flex-shrink:0}
+.ci-val{font-size:14px;color:var(--tx2)}.ci-val a{color:var(--gold)}
+
+/* Footer */
+footer{background:var(--bg2);border-top:1px solid var(--brd);padding:64px 52px 30px}
+.foot-g{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px}
+.foot-logo{font-family:'Playfair Display',serif;font-size:17px;color:var(--gold);margin-bottom:9px;letter-spacing:3px}
+.foot-sub{font-size:13px;color:var(--tx3);line-height:1.85}
+.foot-col h4{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3);margin-bottom:14px}
+.foot-col a{display:block;font-size:13px;color:var(--tx2);margin-bottom:9px;transition:color .2s}.foot-col a:hover{color:var(--gold)}
+.foot-soc{display:flex;gap:9px;margin-top:16px}
+.fsoc{width:32px;height:32px;border-radius:50%;background:var(--bg3);border:1px solid var(--brd);display:flex;align-items:center;justify-content:center;font-size:12px;transition:border-color .2s}.fsoc:hover{border-color:var(--brd-g)}
+.foot-bot{border-top:1px solid var(--brd);padding-top:22px;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--tx3)}
+
+/* ══ AUTH MODAL ══ */
+.moverlay{position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.82);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:24px}
+.moverlay.open{display:flex}
+.mbox{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--rl);padding:38px;width:100%;max-width:420px;position:relative;animation:su .25s ease}
+.mbox-w{max-width:600px}
+@keyframes su{from{opacity:0;transform:translateY(13px)}to{opacity:1;transform:none}}
+.mx{position:absolute;top:15px;right:18px;color:var(--tx3);font-size:20px;line-height:1;background:none;border:none}
+.mx:hover{color:var(--tx)}
+.mlogo{font-family:'Playfair Display',serif;font-size:15px;letter-spacing:2px;color:var(--gold);margin-bottom:22px}
+.mlogo span{display:block;font-size:8px;letter-spacing:3px;font-family:'DM Sans',sans-serif;color:var(--tx3);margin-top:2px}
+.mtabs{display:flex;border-bottom:1px solid var(--brd);margin-bottom:24px}
+.mtab{flex:1;padding:10px;text-align:center;font-size:11px;letter-spacing:1px;text-transform:uppercase;background:none;border:none;border-bottom:2px solid transparent;color:var(--tx2);margin-bottom:-1px;transition:all .2s;cursor:pointer}
+.mtab.active{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* ══ APP ══ */
+#va{display:none}
+.app{display:flex;min-height:100vh}
+.sb{width:var(--sw);flex-shrink:0;background:var(--bg2);border-right:1px solid var(--brd);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;transition:transform .3s}
+.sb-hd{padding:20px 16px 15px;border-bottom:1px solid var(--brd)}
+.sb-logo{font-family:'Playfair Display',serif;font-size:13px;letter-spacing:3px;color:var(--gold);display:flex;align-items:center;gap:9px}
+.sb-logo svg{width:26px;height:26px;flex-shrink:0}
+.sb-lt span{display:block;font-size:7px;letter-spacing:3px;font-family:'DM Sans',sans-serif;color:var(--tx3);margin-top:1px}
+.sb-nav{flex:1;padding:10px 7px}
+.ng-lbl{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--tx3);padding:10px 9px 4px;display:block}
+.ni{display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:8px;font-size:13px;color:var(--tx2);cursor:pointer;transition:all .18s;background:none;border:none;width:100%;text-align:left;margin-bottom:2px}
+.ni:hover{background:var(--bg3);color:var(--tx)}.ni.active{background:var(--gold-dim);color:var(--gold)}
+.ni .ic{font-size:15px;width:18px;text-align:center;flex-shrink:0}
+.sb-user{padding:13px 16px;border-top:1px solid var(--brd);display:flex;align-items:center;gap:11px}
+.sb-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dim),var(--bg4));display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:13px;font-weight:500;flex-shrink:0;border:1px solid var(--brd-g)}
+.sb-un{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-ur{font-size:10px;color:var(--tx3)}
+.main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.atb{height:var(--nh);display:flex;align-items:center;justify-content:space-between;padding:0 30px;border-bottom:1px solid var(--brd);background:rgba(14,14,15,.97);backdrop-filter:blur(16px);position:sticky;top:0;z-index:50}
+.atb-l h2{font-size:17px;font-weight:400;font-family:'Playfair Display',serif}
+.atb-l p{font-size:11px;color:var(--tx3);margin-top:1px}
+.atb-r{display:flex;align-items:center;gap:11px}
+.nb{width:34px;height:34px;border-radius:50%;background:var(--bg3);border:1px solid var(--brd);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--tx2);cursor:pointer;position:relative;transition:border-color .2s}
+.nb:hover{border-color:var(--brd-g)}
+.nd{position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--gold);border:2px solid var(--bg2)}
+.tu{display:flex;align-items:center;gap:9px;cursor:pointer}
+.tav{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dim),var(--bg4));display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:12px;font-weight:500;border:1.5px solid var(--brd-g)}
+.pa{flex:1;padding:26px 30px}
+.panel{display:none}.panel.active{display:block}
+
+/* Dashboard hero */
+.dh{border-radius:var(--rl);padding:34px 42px;margin-bottom:22px;background:linear-gradient(135deg,#1a1208 0%,#2a1d07 40%,#0f1520 80%,#0e0e0f 100%);border:1px solid var(--brd);position:relative;overflow:hidden;min-height:182px;display:flex;align-items:center}
+.dh-ico{position:absolute;right:40px;bottom:0;font-size:100px;opacity:.06;line-height:1;pointer-events:none}
+.dh-c{position:relative;z-index:1}
+.dh-c h2{font-family:'Playfair Display',serif;font-size:24px;font-weight:400;margin-bottom:5px}
+.dh-c p{font-size:14px;color:var(--tx2);margin-bottom:20px}
+.sr{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:22px}
+.sc{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--rl);padding:18px;cursor:pointer;transition:border-color .2s,transform .2s}
+.sc:hover{border-color:var(--brd-g);transform:translateY(-1px)}
+.sc .lbl{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);margin-bottom:9px}
+.sc .val{font-family:'Playfair Display',serif;font-size:28px;line-height:1;margin-bottom:3px}
+.sc .sub{font-size:11px;color:var(--gold)}
+.pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(295px,1fr));gap:15px}
+.pc{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--rl);overflow:hidden;cursor:pointer;transition:border-color .3s,transform .3s}
+.pc:hover{border-color:var(--brd-g);transform:translateY(-2px)}
+.pt{height:128px;position:relative;overflow:hidden}
+.pt.c1{background:linear-gradient(135deg,#1a0e05,#2d1f08,#1a1520)}.pt.c2{background:linear-gradient(135deg,#050f1a,#081828,#101520)}
+.pt.c3{background:linear-gradient(135deg,#1a0808,#280f0f,#1a1020)}.pt.c4{background:linear-gradient(135deg,#051a08,#0a2810,#101a14)}
+.pt-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.82) 0%,transparent 55%);display:flex;align-items:flex-end;padding:13px}
+.pt-title{font-family:'Playfair Display',serif;font-size:14px;font-weight:400;line-height:1.3}
+.pb{padding:13px}
+.pm{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.pp-lbl{font-size:10px;color:var(--tx3);margin-bottom:5px;display:flex;justify-content:space-between}
+.pact{display:flex;gap:7px;margin-top:11px;flex-wrap:wrap}
+
+/* Order form */
+.ol{display:grid;grid-template-columns:1fr 310px;gap:20px}
+.ofc{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--rl);padding:28px}
+.osc{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--rl);padding:20px;position:sticky;top:calc(var(--nh)+26px);height:fit-content}
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px}
+.tybtn{padding:13px 6px;border-radius:var(--r);background:var(--bg3);border:1.5px solid var(--brd);color:var(--tx2);font-size:11px;text-align:center;cursor:pointer;transition:all .2s}
+.tybtn:hover{border-color:var(--brd-g);color:var(--tx)}.tybtn.sel{border-color:var(--gold);background:var(--gold-dim);color:var(--gold)}
+.tybtn .ti{font-size:19px;display:block;margin-bottom:4px}
+.ostep{display:flex;align-items:center;gap:10px;padding:9px;border-radius:var(--r);background:var(--bg3);border:1px solid var(--brd);font-size:12px;color:var(--tx2);margin-bottom:7px}
+.ostep.done{border-color:rgba(40,167,69,.3);color:var(--tx)}
+.ostep-n{width:24px;height:24px;border-radius:50%;background:var(--bg4);border:1.5px solid var(--brd);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.ostep.done .ostep-n{background:rgba(40,167,69,.15);border-color:rgba(40,167,69,.4);color:#28a745}
+.pest{background:var(--bg3);border:1px solid var(--brd-g);border-radius:var(--r);padding:13px;margin-top:14px;display:none}
+.pest .plbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3);margin-bottom:7px}
+.pest .rng{font-family:'Playfair Display',serif;font-size:20px;color:var(--gold)}
+
+/* Upload zone */
+.uz{border:2px dashed var(--brd-g);border-radius:var(--r);padding:24px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg3)}
+.uz:hover,.uz.drag{border-color:var(--gold);background:var(--gold-dim)}
+.uz-ico{font-size:28px;margin-bottom:7px}
+.uz p{font-size:13px;color:var(--tx2)}.uz small{font-size:11px;color:var(--tx3);display:block;margin-top:3px}
+.fp-wrap{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+.fp-i{background:var(--bg3);border:1px solid var(--brd);border-radius:var(--r);padding:7px 11px;display:flex;align-items:center;gap:7px;font-size:11px;max-width:190px}
+.fp-nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--tx2)}
+.fp-rm{margin-left:auto;cursor:pointer;color:var(--tx3);font-size:12px;background:none;border:none}
+.fp-rm:hover{color:#dc3545}
+
+/* Messages */
+.ml{display:grid;grid-template-columns:255px 1fr;height:calc(100vh - var(--nh) - 54px);background:var(--bg2);border:1px solid var(--brd);border-radius:var(--rl);overflow:hidden}
+.cl-pan{border-right:1px solid var(--brd);overflow-y:auto}
+.cl-hd{padding:11px 13px;border-bottom:1px solid var(--brd);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3)}
+.ci{padding:12px 13px;border-bottom:1px solid var(--brd);cursor:pointer;transition:background .15s}
+.ci:hover,.ci.act{background:var(--bg3)}
+.ci-ref{font-size:12px;color:var(--gold);margin-bottom:2px;font-weight:500}
+.ci-prev{font-size:11px;color:var(--tx3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ca{display:flex;flex-direction:column}
+.ca-hd{padding:12px 19px;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between}
+.ca-hd h3{font-size:14px;font-weight:400}
+.cm{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:11px}
+.cmsg{max-width:65%}.cmsg.mine{align-self:flex-end}
+.cbub{padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.6}
+.cmsg:not(.mine) .cbub{background:var(--bg3);border:1px solid var(--brd)}
+.cmsg.mine .cbub{background:var(--gold-dim);border:1px solid var(--brd-g)}
+.ctime{font-size:10px;color:var(--tx3);margin-top:3px}.cmsg.mine .ctime{text-align:right}
+.cib{padding:11px 19px;border-top:1px solid var(--brd);display:flex;gap:9px;align-items:center}
+.cib input{flex:1;background:var(--bg3);border:1px solid var(--brd);color:var(--tx);padding:9px 15px;border-radius:20px;font-size:13px;outline:none;transition:border-color .2s}
+.cib input:focus{border-color:var(--gold)}
+.csend{width:36px;height:36px;border-radius:50%;background:var(--gold);color:#0E0E0F;font-size:13px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+
+/* Invoices */
+.ii{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--r);padding:15px 18px;margin-bottom:9px;display:flex;align-items:center;justify-content:space-between;transition:border-color .2s}
+.ii:hover{border-color:var(--brd-g)}
+.ii-amt{font-family:'Playfair Display',serif;font-size:17px;color:var(--gold)}
+.ii-acts{display:flex;gap:7px;align-items:center}
+
+/* Files */
+.files-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:9px;margin-top:9px}
+.file-card{background:var(--bg3);border:1px solid var(--brd);border-radius:var(--r);padding:11px;text-align:center;position:relative;transition:border-color .2s}
+.file-card:hover{border-color:var(--brd-g)}
+.fc-ico{font-size:24px;margin-bottom:6px}.fc-name{font-size:10px;color:var(--tx2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fc-size{font-size:9px;color:var(--tx3);margin-top:2px}
+.fc-del{position:absolute;top:5px;right:6px;color:var(--tx3);font-size:11px;background:none;border:none;cursor:pointer}.fc-del:hover{color:#dc3545}
+
+/* Admin */
+.ak-g{display:grid;grid-template-columns:repeat(6,1fr);gap:11px;margin-bottom:20px}
+.ak{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--rl);padding:15px}
+.ak .lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3);margin-bottom:7px}
+.ak .val{font-family:'Playfair Display',serif;font-size:22px;line-height:1}
+.ak .chg{font-size:10px;margin-top:3px}.chg.up{color:#28a745}.chg.dn{color:#dc3545}
+.tw{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--rl);overflow:hidden;margin-bottom:18px}
+.tw-hd{padding:13px 17px;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between}
+.tw-ht{font-size:13px;font-weight:400;font-family:'Playfair Display',serif}
+.dt{width:100%;border-collapse:collapse;font-size:12px}
+.dt thead tr{border-bottom:1px solid var(--brd)}
+.dt th{padding:9px 13px;text-align:left;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3);font-weight:400}
+.dt tbody tr{border-bottom:1px solid rgba(255,255,255,.025);transition:background .12s}
+.dt tbody tr:hover{background:rgba(255,255,255,.02)}
+.dt td{padding:11px 13px;color:var(--tx2);vertical-align:middle}
+.dt td:first-child{color:var(--tx)}
+.pgl{display:grid;grid-template-columns:1fr 272px;gap:20px}
+.pslider{width:100%;accent-color:var(--gold);margin-top:7px}
+#push-banner{display:none;background:var(--gold-dim);border:1px solid var(--brd-g);border-radius:var(--r);padding:11px 15px;margin-bottom:16px;align-items:center;gap:11px;font-size:13px}
+#push-banner.show{display:flex}
+.es{text-align:center;padding:52px 22px;display:flex;flex-direction:column;align-items:center;gap:9px}
+.es .ei{font-size:42px;opacity:.17}
+.es h3{font-family:'Playfair Display',serif;font-size:19px;font-weight:400;color:var(--tx2)}
+.es p{font-size:13px;color:var(--tx3)}
+.mnav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(18,18,20,.97);border-top:1px solid var(--brd);backdrop-filter:blur(18px);padding:8px 0 max(8px,env(safe-area-inset-bottom))}
+.mn-items{display:flex;align-items:center;justify-content:space-around}
+.mni{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 10px;background:none;border:none;color:var(--tx3);font-size:10px;cursor:pointer;transition:color .2s;min-width:48px}
+.mni:hover,.mni.active{color:var(--gold)}.mni .mico{font-size:20px}
+.mni.cmd{background:var(--gold);color:#0E0E0F;width:50px;height:50px;border-radius:50%;font-size:22px;margin-top:-17px;box-shadow:0 4px 18px rgba(201,146,42,.4);flex-direction:row;min-width:auto;padding:0;justify-content:center}
+
+@media(max-width:1200px){.ak-g{grid-template-columns:repeat(3,1fr)}.sr{grid-template-columns:repeat(2,1fr)}.pack-g{grid-template-columns:1fr 1fr}}
+@media(max-width:900px){.po-g{grid-template-columns:1fr}.po-big{grid-column:1}.testi-g{grid-template-columns:1fr}.pack-g{grid-template-columns:1fr}.cont-g{grid-template-columns:1fr}}
+@media(max-width:768px){
+  .tnav{padding:0 20px}.tnav-l{display:none}.tnav-r{gap:7px}
+  .hero,.sec{padding:56px 22px}.hero{padding-top:calc(var(--nh)+26px)}
+  .ss{padding:22px 22px}.foot-g{grid-template-columns:1fr}.footer{padding:40px 22px 24px}
+  .sb{transform:translateX(-100%)}.sb.open{transform:none}
+  .main{margin-left:0}.pa{padding:14px 12px}.main{padding-bottom:76px}
+  .mnav{display:block}.sr{grid-template-columns:repeat(2,1fr)}
+  .ol{grid-template-columns:1fr}.osc{display:none}
+  .ml{grid-template-columns:1fr}.cl-pan{display:none}
+  .ak-g{grid-template-columns:repeat(2,1fr)}.pgl{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div id="tw"></div>
+
+<!-- ══════ LANDING ══════ -->
+<div id="vl">
+<nav class="tnav">
+  <div class="tlogo">
+    <svg viewBox="0 0 60 60" fill="none"><path d="M30 5 L55 20 L55 40 L30 55 L5 40 L5 20 Z" stroke="#C9922A" stroke-width="1.5" fill="none"/><path d="M30 14 L46 23 L46 37 L30 46 L14 37 L14 23 Z" stroke="#C9922A" stroke-width="1" fill="rgba(201,146,42,0.08)"/><circle cx="30" cy="30" r="5" fill="#C9922A" opacity="0.8"/><path d="M30 19v6M30 35v6M19 30h6M35 30h6" stroke="#C9922A" stroke-width="1.5" opacity="0.5"/></svg>
+    <div class="tlt">CINEMAWAY<span>PRODUCTION AGENCY</span></div>
+  </div>
+  <div class="tnav-l">
+    <a href="#portfolio">Portfolio</a><a href="#services">Services</a>
+    <a href="#packs">Packs</a><a href="#clients">Clients</a><a href="#contact">Contact</a>
+  </div>
+  <div class="tnav-r">
+    <button class="btn btn-ghost btn-sm" id="btn-login">Se connecter</button>
+    <button class="btn btn-gold btn-sm" onclick="reqAuth(()=>goApp('panel-order'))">Commander →</button>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hbg2"></div><div class="hbg"></div>
+  <div class="hc">
+    <div class="hey">Production Audiovisuelle · Marrakech</div>
+    <h1>Votre vision.<br><em>Notre cinéma.</em><br>Vos résultats.</h1>
+    <p class="hsub">Films publicitaires, courts métrages, documentaires et montage professionnel. CINEMAWAY transforme vos idées en contenus visuels qui captent l'attention et marquent les esprits.</p>
+    <div class="hcta">
+      <button class="btn btn-gold" onclick="reqAuth(()=>goApp('panel-order'))">Commander un projet →</button>
+      <a href="#portfolio" class="btn btn-ghost">▶ Voir le portfolio</a>
+    </div>
+    <div class="hcli">
+      <span class="hcli-l">Clients :</span>
+      <div class="hcli-tags">
+        <span class="ctag">Presta Maroc</span><span class="ctag">Siriustore</span><span class="ctag">Duniefilm</span>
+        <span class="ctag">Marjane</span><span class="ctag">LIO</span><span class="ctag">SNRT</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="sec" id="portfolio">
+  <div class="ey">Portfolio</div><h2 class="sh">Nos productions</h2>
+  <p class="shsub">Courts métrages, films publicitaires et documentaires réalisés par CINEMAWAY Agency à Marrakech.</p>
+  <div class="po-g">
+    <div class="po-item po-big">
+      <img src="/static/portfolio/fin_de_tournage.jpg" alt="Fin de tournage" loading="lazy">
+      <div class="po-ov"><div><div class="po-cat">Court Métrage</div><div class="po-name">FIN DE TOURNAGE</div><div class="po-desc">Production CINEMAWAY · Marrakech</div></div></div>
+    </div>
+    <div class="po-item">
+      <img src="/static/portfolio/prespective_noire.png" alt="Prespective Noire" loading="lazy">
+      <div class="po-ov"><div><div class="po-cat">Court Métrage</div><div class="po-name">PRESPECTIVE NOIRE</div><div class="po-desc">Réalisé par CINEMAWAY</div></div></div>
+    </div>
+    <div class="po-item">
+      <img src="/static/portfolio/elmedhi.png" alt="Elmedhi" loading="lazy">
+      <div class="po-ov"><div><div class="po-cat">Court Métrage</div><div class="po-name">ELMEDHI — À TRAVERS LE TEMPS</div><div class="po-desc">Adnane Ouftih · Reda Saikouk · Mouad Talibi</div></div></div>
+    </div>
+    <div class="po-item po-big">
+      <img src="/static/portfolio/unknown.png" alt="Unknown" loading="lazy" style="object-position:center top">
+      <div class="po-ov"><div><div class="po-cat">Short Film</div><div class="po-name">UNKNOWN</div><div class="po-desc">Dir. Youness Elidrissi · Moniam Ali · Coming Soon</div></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec-alt" id="services">
+  <div class="ey">Catalogue</div><h2 class="sh">Nos services</h2>
+  <p class="shsub">20 prestations audiovisuelles professionnelles pour tous vos besoins de production au Maroc.</p>
+  <div class="svc-g" id="land-svcs"></div>
+</section>
+
+<section class="sec" id="packs">
+  <div class="ey">Offres</div><h2 class="sh">Choisissez votre pack</h2>
+  <p class="shsub">Des formules clé en main adaptées à chaque budget et chaque ambition créative.</p>
+  <div class="pack-g">
+    <div class="pack">
+      <div class="pname">Basic</div><div class="pprice">5 000 <span>– 8 000 MAD</span></div>
+      <p class="pdesc">Idéal pour les créateurs de contenu et petites entreprises souhaitant une vidéo professionnelle.</p>
+      <ul class="pfeats"><li>Vidéo courte (1–2 min)</li><li>1 journée de tournage</li><li>Montage professionnel</li><li>Livraison en 10 jours</li><li>1 révision incluse</li></ul>
+      <button class="btn btn-dark btn-full" onclick="reqAuth(()=>goApp('panel-order'))">Choisir Basic</button>
+    </div>
+    <div class="pack feat">
+      <div class="phot">Populaire</div><div class="pname">Pro</div><div class="pprice">8 000 <span>– 15 000 MAD</span></div>
+      <p class="pdesc">Pour les marques qui souhaitent un contenu cinématographique à fort impact commercial.</p>
+      <ul class="pfeats"><li>Concept créatif complet</li><li>Tournage 1–2 jours</li><li>Montage avancé + sound design</li><li>Color grading professionnel</li><li>Livraison en 21 jours</li><li>3 révisions incluses</li></ul>
+      <button class="btn btn-gold btn-full" onclick="reqAuth(()=>goApp('panel-order'))">Choisir Pro</button>
+    </div>
+    <div class="pack">
+      <div class="pname">Premium</div><div class="pprice">15 000 <span>– 30 000+ MAD</span></div>
+      <p class="pdesc">Production cinématographique complète pour grandes marques et institutions.</p>
+      <ul class="pfeats"><li>Direction artistique dédiée</li><li>Multi-caméras, équipe complète</li><li>Storytelling narratif</li><li>Post-production premium</li><li>Livraison en 45 jours</li><li>Révisions illimitées</li></ul>
+      <button class="btn btn-dark btn-full" onclick="reqAuth(()=>goApp('panel-order'))">Choisir Premium</button>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec-alt" id="clients">
+  <div class="ey">Ils nous font confiance</div><h2 class="sh">Nos clients</h2>
+  <div class="cli-g">
+    <div class="cli-logo">Presta Maroc</div><div class="cli-logo">Siriustore</div><div class="cli-logo">Duniefilm</div>
+    <div class="cli-logo">Ass. Amal Tamansourte</div><div class="cli-logo">Ass. Atlas Kinder</div>
+    <div class="cli-logo">Marjane</div><div class="cli-logo">LIO</div>
+    <div class="cli-logo">SNRT</div>
+  </div>
+</section>
+
+
+<section class="sec sec-alt" id="contact">
+  <div class="ey">Contact</div><h2 class="sh">Travaillons ensemble</h2>
+  <div class="cont-g">
+    <div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:400;margin-bottom:16px">Parlez-nous de votre projet</h3>
+      <p style="font-size:14px;color:var(--tx2);line-height:1.85;margin-bottom:24px">Notre équipe à Marrakech est prête à donner vie à vos idées. Créez un compte pour commander et suivre votre projet en temps réel.</p>
+      <div class="ci-row"><span class="ci-ico">📧</span><div class="ci-val"><a href="mailto:cinemaway26@gmail.com">cinemaway26@gmail.com</a></div></div>
+      <div class="ci-row"><span class="ci-ico">📞</span><div class="ci-val"><a href="tel:+212654045836">+212 654-045-836</a></div></div>
+      <div class="ci-row"><span class="ci-ico">📍</span><div class="ci-val">Marrakech, Maroc</div></div>
+      <div class="ci-row"><span class="ci-ico">📸</span><div class="ci-val"><a href="https://instagram.com/cinemaway.26" target="_blank">@cinemaway.26</a></div></div>
+    </div>
+    <div class="card cp">
+      <h3 style="font-family:'Playfair Display',serif;font-size:18px;font-weight:400;margin-bottom:18px">Envoyer un message</h3>
+      <div id="ct-msg-out" class="fmsg"></div>
+      <div class="field"><label>Nom</label><input type="text" id="ct-nm" placeholder="Prénom Nom"></div>
+      <div class="field"><label>Email</label><input type="email" id="ct-em" placeholder="vous@domaine.com"></div>
+      <div class="field"><label>Message</label><textarea id="ct-msg" rows="4" placeholder="Décrivez votre projet…"></textarea></div>
+      <button class="btn btn-gold btn-full" onclick="sendContact()">Envoyer →</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-g">
+    <div><div class="foot-logo">CINEMAWAY</div><p class="foot-sub">We Tell Stories That Stay.<br>Production audiovisuelle premium à Marrakech, Maroc.</p>
+    <div class="foot-soc"><a class="fsoc" href="mailto:cinemaway26@gmail.com">✉</a><a class="fsoc" href="tel:+212654045836">📞</a><a class="fsoc" href="https://instagram.com/cinemaway.26" target="_blank">📸</a></div></div>
+    <div class="foot-col"><h4>Services</h4><a href="#services">Montage Vidéo</a><a href="#services">Production</a><a href="#services">Film Publicitaire</a><a href="#services">Documentaire</a><a href="#services">Réseaux Sociaux</a></div>
+    <div class="foot-col"><h4>Packs</h4><a href="#packs">Basic</a><a href="#packs">Pro</a><a href="#packs">Premium</a></div>
+    <div class="foot-col"><h4>Contact</h4><a href="mailto:cinemaway26@gmail.com">cinemaway26@gmail.com</a><a href="tel:+212654045836">+212 654-045-836</a><a href="https://instagram.com/cinemaway.26" target="_blank">@cinemaway.26</a><a href="#">Marrakech, Maroc</a></div>
+  </div>
+  <div class="foot-bot"><span>© 2025 CINEMAWAY Production Agency. Tous droits réservés.</span><span>ICE: 003766068000003</span></div>
+</footer>
+</div><!-- /vl -->
+
+<!-- ══ AUTH MODAL ══ -->
+<div class="moverlay" id="m-auth">
+  <div class="mbox">
+    <button class="mx" onclick="cm('m-auth')">✕</button>
+    <div class="mlogo">CINEMAWAY<span>CLIENT PORTAL</span></div>
+    <div class="mtabs"><button class="mtab active" id="t-li" onclick="swt('login')">Connexion</button><button class="mtab" id="t-rg" onclick="swt('register')">Inscription</button></div>
+    <div id="auth-msg" class="fmsg"></div>
+    <div id="f-li">
+      <div class="field"><label>Email</label><input type="email" id="li-em" placeholder="vous@domaine.com" autocomplete="email"></div>
+      <div class="field"><label>Mot de passe</label><input type="password" id="li-pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="btn btn-gold btn-full" onclick="doLogin()">Connexion →</button>
+      <p style="font-size:12px;color:var(--tx3);text-align:center;margin-top:12px">Pas de compte ? <a href="#" style="color:var(--gold)" onclick="swt('register');return false">Créer un compte</a></p>
+    </div>
+    <div id="f-rg" style="display:none">
+      <div class="g2"><div class="field"><label>Nom *</label><input type="text" id="rg-nm" placeholder="Prénom Nom"></div><div class="field"><label>Téléphone</label><input type="text" id="rg-ph" placeholder="+212 6…"></div></div>
+      <div class="field"><label>Email *</label><input type="email" id="rg-em" placeholder="vous@domaine.com"></div>
+      <div class="field"><label>Entreprise</label><input type="text" id="rg-co" placeholder="Votre société"></div>
+      <div class="field"><label>Mot de passe *</label><input type="password" id="rg-pw" placeholder="Min. 6 caractères"></div>
+      <button class="btn btn-gold btn-full" onclick="doRegister()">Créer mon compte →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ORDER DETAIL MODAL -->
+<div class="moverlay" id="m-order">
+  <div class="mbox mbox-w" style="max-height:90vh;overflow-y:auto">
+    <button class="mx" onclick="cm('m-order')">✕</button>
+    <div id="m-order-c"></div>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="va">
+<div class="app">
+  <aside class="sb" id="app-sb">
+    <div class="sb-hd">
+      <div class="sb-logo">
+        <svg viewBox="0 0 60 60" fill="none"><path d="M30 5 L55 20 L55 40 L30 55 L5 40 L5 20 Z" stroke="#C9922A" stroke-width="1.5" fill="none"/><path d="M30 14 L46 23 L46 37 L30 46 L14 37 L14 23 Z" stroke="#C9922A" stroke-width="1" fill="rgba(201,146,42,0.08)"/><circle cx="30" cy="30" r="5" fill="#C9922A" opacity="0.8"/></svg>
+        <div class="sb-lt">CINEMAWAY<span>PRODUCTION AGENCY</span></div>
+      </div>
+    </div>
+    <nav class="sb-nav" id="sb-nav"></nav>
+    <div class="sb-user"><div class="sb-av" id="sb-av">C</div><div><div class="sb-un" id="sb-nm">—</div><div class="sb-ur" id="sb-role">Client</div></div></div>
+  </aside>
+  <div class="main">
+    <div class="atb">
+      <div class="atb-l"><h2 id="atb-t">Tableau de bord</h2><p>CINEMAWAY Production Agency · Marrakech</p></div>
+      <div class="atb-r">
+        <div class="nb" onclick="toast('Pas de nouvelles notifications','info')">🔔<span class="nd" id="nd" style="display:none"></span></div>
+        <div class="tu" onclick="sp('panel-profile')"><div class="tav" id="t-av">C</div><span style="font-size:13px" id="t-un">—</span></div>
+        <button class="btn btn-dark btn-sm" onclick="doLogout()">Déconnexion</button>
+      </div>
+    </div>
+    <div class="pa">
+
+      <!-- Dashboard -->
+      <div class="panel active" id="panel-dashboard">
+        <div id="push-banner"><span>🔔</span><span style="flex:1">Activez les notifications pour recevoir les mises à jour de vos projets.</span><button class="btn btn-gold btn-sm" onclick="askPush()">Activer</button><button class="btn btn-dark btn-sm" onclick="$('push-banner').classList.remove('show')">Ignorer</button></div>
+        <div class="dh"><div class="dh-c"><h2>Bienvenue, <span id="dash-fn">—</span> 👋</h2><p>Suivi de vos projets CINEMAWAY en temps réel.</p><button class="btn btn-gold btn-sm" onclick="sp('panel-order')">+ Nouveau projet →</button></div><div class="dh-ico">🎬</div></div>
+        <div class="sr" id="cl-stats"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><h3 style="font-family:'Playfair Display',serif;font-size:19px;font-weight:400">Projets récents</h3><button class="btn btn-dark btn-sm" onclick="sp('panel-projects')">Voir tout →</button></div>
+        <div class="pg" id="dash-pg"></div>
+      </div>
+
+      <!-- Projects -->
+      <div class="panel" id="panel-projects">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px"><h2 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:400">Mes projets</h2><button class="btn btn-gold btn-sm" onclick="sp('panel-order')">+ Commander</button></div>
+        <div class="pg" id="all-pg"></div>
+      </div>
+
+      <!-- Order -->
+      <div class="panel" id="panel-order">
+        <h2 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:400;margin-bottom:5px">Commander un projet</h2>
+        <p style="font-size:13px;color:var(--tx2);margin-bottom:22px">Remplissez le brief. Notre équipe vous contacte sous 24h.</p>
+        <div class="ol">
+          <div class="ofc">
+            <div id="order-msg" class="fmsg"></div>
+            <div style="margin-bottom:18px"><div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx2);margin-bottom:9px">Type de projet *</div>
+            <div class="tgrid">
+              <button class="tybtn" data-cat="pub" onclick="selType(this)"><span class="ti">🎬</span>Film Pub</button>
+              <button class="tybtn" data-cat="doc" onclick="selType(this)"><span class="ti">🎥</span>Documentaire</button>
+              <button class="tybtn" data-cat="montage" onclick="selType(this)"><span class="ti">✂️</span>Montage</button>
+              <button class="tybtn" data-cat="social" onclick="selType(this)"><span class="ti">📱</span>Social</button>
+              <button class="tybtn" data-cat="production" onclick="selType(this)"><span class="ti">🎞️</span>Production</button>
+              <button class="tybtn" data-cat="complement" onclick="selType(this)"><span class="ti">🛠️</span>Complémentaire</button>
+            </div></div>
+            <div class="field"><label>Service *</label><select id="of-svc" onchange="updEst()"><option value="">— Sélectionner —</option></select></div>
+            <div class="field"><label>Titre du projet *</label><input type="text" id="of-ttl" placeholder="Ex : Spot publicitaire pour lancement de produit…"></div>
+            <div class="field"><label>Brief détaillé</label><textarea id="of-dsc" placeholder="Objectifs, références, audience cible, contraintes…"></textarea></div>
+            <div class="g2"><div class="field"><label>Budget (MAD)</label><input type="number" id="of-bdg" placeholder="Ex: 8000"></div><div class="field"><label>Délai souhaité</label><input type="date" id="of-ddl"></div></div>
+            <div style="margin-bottom:18px"><div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx2);margin-bottom:9px">📎 Fichiers de référence</div>
+              <div class="uz" id="upload-zone" onclick="$('file-input').click()" ondragover="onDragOver(event)" ondragleave="onDragLeave()" ondrop="onDrop(event)"><div class="uz-ico">📁</div><p>Cliquez ou glissez vos fichiers ici</p><small>Images, vidéos, PDFs — Max 200 MB</small></div>
+              <input type="file" id="file-input" multiple accept="image/*,video/*,.pdf,.zip" style="display:none" onchange="addFiles(this.files)">
+              <div class="fp-wrap" id="fp-wrap"></div>
+            </div>
+            <button class="btn btn-gold btn-full" id="submit-btn" onclick="submitOrder()">Envoyer le brief →</button>
+          </div>
+          <div class="osc">
+            <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);margin-bottom:13px">Processus CINEMAWAY</div>
+            <div class="ostep done"><div class="ostep-n">✓</div><span>Brief soumis</span></div>
+            <div class="ostep"><div class="ostep-n">2</div><span>Analyse & Devis</span></div>
+            <div class="ostep"><div class="ostep-n">3</div><span>Acompte réglé</span></div>
+            <div class="ostep"><div class="ostep-n">4</div><span>Tournage / Production</span></div>
+            <div class="ostep"><div class="ostep-n">5</div><span>Montage & Révisions</span></div>
+            <div class="ostep"><div class="ostep-n">6</div><span>Livraison finale</span></div>
+            <div class="pest" id="pest"><div class="plbl">Estimation de prix</div><div class="rng" id="est-rng">—</div><div style="font-size:10px;color:var(--tx3);margin-top:3px">Selon le service sélectionné</div></div>
+            <div style="margin-top:18px;padding:13px;background:var(--bg3);border-radius:var(--r);border:1px solid var(--brd)">
+              <div style="font-size:10px;color:var(--tx3);margin-bottom:7px">📞 CONTACT DIRECT</div>
+              <a href="tel:+212654045836" style="font-size:13px;color:var(--gold);display:block;margin-bottom:4px">+212 654-045-836</a>
+              <a href="mailto:cinemaway26@gmail.com" style="font-size:11px;color:var(--tx2)">cinemaway26@gmail.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Catalogue -->
+      <div class="panel" id="panel-catalogue">
+        <h2 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:400;margin-bottom:5px">Catalogue de services</h2>
+        <p style="font-size:13px;color:var(--tx2);margin-bottom:18px">20 prestations audiovisuelles disponibles à Marrakech et partout au Maroc.</p>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px" id="cat-btns">
+          <button class="btn btn-gold btn-sm" data-cat="all" onclick="fCat(this)">Tout</button>
+          <button class="btn btn-dark btn-sm" data-cat="montage" onclick="fCat(this)">✂️ Montage</button>
+          <button class="btn btn-dark btn-sm" data-cat="production" onclick="fCat(this)">🎞️ Production</button>
+          <button class="btn btn-dark btn-sm" data-cat="pub" onclick="fCat(this)">🎬 Film Pub</button>
+          <button class="btn btn-dark btn-sm" data-cat="doc" onclick="fCat(this)">🎥 Documentaire</button>
+          <button class="btn btn-dark btn-sm" data-cat="social" onclick="fCat(this)">📱 Social</button>
+          <button class="btn btn-dark btn-sm" data-cat="complement" onclick="fCat(this)">🛠️ Complémentaires</button>
+        </div>
+        <div class="svc-g" id="cat-sg"></div>
+      </div>
+
+      <!-- Messages -->
+      <div class="panel" id="panel-messages">
+        <h2 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:400;margin-bottom:18px">Messagerie</h2>
+        <div class="ml">
+          <div class="cl-pan"><div class="cl-hd">Projets</div><div id="cl-items"></div></div>
+          <div class="ca">
+            <div class="ca-hd"><h3 id="chat-ttl">Sélectionnez un projet</h3></div>
+            <div class="cm" id="chat-cm"><div class="es"><div class="ei">💬</div><h3>Aucune conversation</h3><p>Sélectionnez un projet pour démarrer</p></div></div>
+            <div class="cib"><input type="text" id="chat-in" placeholder="Votre message…" onkeydown="if(event.key==='Enter')sndMsg()"><button class="csend" onclick="sndMsg()">➤</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Factures -->
+      <div class="panel" id="panel-invoices">
+        <h2 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:400;margin-bottom:20px">Factures</h2>
+        <div id="inv-list"></div>
+      </div>
+
+
+      <!-- Profile -->
+      <div class="panel" id="panel-profile">
+        <h2 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:400;margin-bottom:20px">Paramètres du compte</h2>
+        <div class="pgl">
+          <div class="card cp">
+            <h3 style="font-size:14px;font-weight:400;margin-bottom:16px">Informations personnelles</h3>
+            <div id="pf-msg" class="fmsg"></div>
+            <div class="field"><label>Nom complet</label><input type="text" id="pf-nm"></div>
+            <div class="field"><label>Email</label><input type="email" id="pf-em" disabled style="opacity:.4"></div>
+            <div class="field"><label>Téléphone</label><input type="text" id="pf-ph"></div>
+            <div class="field"><label>Entreprise</label><input type="text" id="pf-co"></div>
+            <div class="field"><label>Nouveau mot de passe</label><input type="password" id="pf-pw" placeholder="Laisser vide pour conserver"></div>
+            <button class="btn btn-gold" onclick="saveProfile()">Enregistrer</button>
+          </div>
+          <div>
+            <div class="card cp" style="margin-bottom:12px">
+              <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);margin-bottom:12px">Mon compte</div>
+              <div style="font-size:13px;color:var(--tx2);line-height:2.3"><div>📅 Inscrit le : <span id="pf-dt" style="color:var(--tx)">—</span></div><div>📦 Commandes : <span id="pf-nb" style="color:var(--tx)">0</span></div></div>
+              <hr style="border:none;border-top:1px solid var(--brd);margin:14px 0">
+              <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);margin-bottom:9px">Notifications Push</div>
+              <button class="btn btn-dark btn-sm btn-full" id="push-btn" onclick="askPush()">🔔 Activer les notifications</button>
+            </div>
+            <div class="card cp" style="margin-bottom:12px">
+              <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);margin-bottom:11px">Contact CINEMAWAY</div>
+              <div style="font-size:13px;color:var(--tx2);line-height:2.3">
+                <div>📧 <a href="mailto:cinemaway26@gmail.com" style="color:var(--gold)">cinemaway26@gmail.com</a></div>
+                <div>📞 <a href="tel:+212654045836" style="color:var(--gold)">+212 654-045-836</a></div>
+                <div>📸 <a href="https://instagram.com/cinemaway.26" target="_blank" style="color:var(--gold)">@cinemaway.26</a></div>
+                <div>📍 Marrakech, Maroc</div>
+              </div>
+            </div>
+            <button class="btn btn-danger btn-full" onclick="doLogout()">Se déconnecter</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Overview -->
+      <div class="panel" id="panel-admin-home">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:9px">
+          <h2 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:400">Vue d'ensemble</h2>
+          <div style="display:flex;gap:7px;flex-wrap:wrap"><a href="/api/admin/export/orders" class="btn btn-dark btn-sm">↓ CSV Commandes</a><a href="/api/admin/export/clients" class="btn btn-dark btn-sm">↓ CSV Clients</a></div>
+        </div>
+        <div class="ak-g" id="adm-kpis"></div>
+        <div class="tw"><div class="tw-hd"><span class="tw-ht">Dernières commandes</span><button class="btn btn-dark btn-sm" onclick="sp('panel-admin-orders')">Voir tout →</button></div>
+        <table class="dt"><thead><tr><th>Référence</th><th>Client</th><th>Service</th><th>Budget</th><th>Statut</th><th>Avanc.</th><th>Actions</th></tr></thead><tbody id="adm-recent"></tbody></table></div>
+      </div>
+
+      <!-- Admin Orders -->
+      <div class="panel" id="panel-admin-orders">
+        <h2 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:400;margin-bottom:18px">Toutes les commandes</h2>
+        <div class="tw"><table class="dt"><thead><tr><th>Réf</th><th>Client</th><th>Service</th><th>Titre</th><th>Budget</th><th>Statut</th><th>Avanc.</th><th>📎</th><th>Actions</th></tr></thead><tbody id="adm-all"></tbody></table></div>
+      </div>
+
+      <!-- Admin Clients -->
+      <div class="panel" id="panel-admin-clients">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px"><h2 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:400">Clients</h2><span id="cl-cnt" style="font-size:13px;color:var(--tx2)"></span></div>
+        <div class="tw"><table class="dt"><thead><tr><th>Nom</th><th>Email</th><th>Téléphone</th><th>Entreprise</th><th>Inscrit le</th></tr></thead><tbody id="adm-cli-tb"></tbody></table></div>
+      </div>
+
+    </div><!-- /pa -->
+  </div><!-- /main -->
+</div><!-- /app -->
+<nav class="mnav"><div class="mn-items" id="mn-items"></div></nav>
+</div><!-- /va -->
+
+<script>
+const SL={pending:'En attente',in_progress:'En cours',shooting:'Tournage',editing:'Montage',review:'En révision',completed:'Livré',delivered:'Livré',cancelled:'Annulé'};
+const SC={pending:'bp',in_progress:'bs',shooting:'bs',editing:'be',review:'br',completed:'bd',delivered:'bd',cancelled:'bc'};
+const CL={montage:'Montage Vidéo',production:'Production',pub:'Film Publicitaire',doc:'Documentaire',social:'Réseaux Sociaux',complement:'Complémentaire'};
+const CI={montage:'✂️',production:'🎞️',pub:'🎬',doc:'🎥',social:'📱',complement:'🛠️'};
+const TC=['t1','t2','t3','t4','t5','t6'],PC=['c1','c2','c3','c4'];
+let ME=null,SVCS=[],ORDS=[],CHAT_OID=null,_pf=[],_stars={};
+const $=id=>document.getElementById(id);
+const val=id=>($(id)||{}).value||'';
+const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const fmt=n=>(parseInt(n)||0).toLocaleString('fr-MA');
+const fsize=b=>!b?'':b<1024?b+'B':b<1048576?(b/1024).toFixed(1)+'KB':(b/1048576).toFixed(1)+'MB';
+const ficon=t=>!t?'📁':t.startsWith('image')?'🖼️':t.startsWith('video')?'🎬':t==='application/pdf'?'📄':'📁';
+function om(id){$(id).classList.add('open')}
+function cm(id){$(id).classList.remove('open')}
+function fmsg(id,txt,tp){const e=$(id);if(!e)return;e.textContent=txt;e.className='fmsg '+(tp==='ok'?'ok':'err')}
+function fmsgH(id){const e=$(id);if(e){e.className='fmsg';e.textContent=''}}
+
+function toast(text,type='info',dur=3500){
+  const w=$('tw'),t=document.createElement('div');t.className=`toast ${type}`;
+  t.innerHTML=`<span>${type==='ok'?'✅':type==='err'?'❌':'🔔'}</span><span>${esc(text)}</span>`;
+  w.appendChild(t);setTimeout(()=>{t.style.cssText='opacity:0;transition:opacity .4s';setTimeout(()=>t.remove(),400)},dur);
+}
+
+const af=(u,o={})=>fetch(u,{headers:{'Content-Type':'application/json'},...o});
+
+function sp(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  const p=$(id);if(!p)return;p.classList.add('active');
+  const T={'panel-dashboard':'Tableau de bord','panel-projects':'Mes projets','panel-order':'Commander un projet','panel-catalogue':'Catalogue','panel-messages':'Messagerie','panel-invoices':'Factures','panel-profile':'Paramètres','panel-admin-home':"Vue d'ensemble",'panel-admin-orders':'Commandes','panel-admin-clients':'Clients'};
+  if(T[id])$('atb-t').textContent=T[id];
+  if(id==='panel-messages')loadMsgsList();
+  if(id==='panel-catalogue')renderCat('all');
+  if(id==='panel-invoices')loadInvs();
+  if(id==='panel-profile')fillProfile();
+  if(id==='panel-admin-clients')loadAdmCli();
+}
+
+async function doLogin(){
+  fmsgH('auth-msg');
+  const r=await af('/api/auth/login',{method:'POST',body:JSON.stringify({email:val('li-em'),password:val('li-pw')})});
+  const d=await r.json();
+  if(r.ok){ME=d.user;cm('m-auth');await afterLogin();}
+  else fmsg('auth-msg',d.error||'Identifiants incorrects','err');
+}
+async function doRegister(){
+  fmsgH('auth-msg');
+  if(!val('rg-nm')||!val('rg-em')||!val('rg-pw')){fmsg('auth-msg','Les champs * sont requis','err');return}
+  const r=await af('/api/auth/register',{method:'POST',body:JSON.stringify({name:val('rg-nm'),email:val('rg-em'),phone:val('rg-ph'),company:val('rg-co'),password:val('rg-pw')})});
+  const d=await r.json();
+  if(r.ok){ME=d.user;cm('m-auth');await afterLogin();}
+  else fmsg('auth-msg',d.error||'Erreur','err');
+}
+async function doLogout(){
+  await af('/api/auth/logout',{method:'POST'});
+  ME=null;ORDS=[];_pf=[];$('va').style.display='none';$('vl').style.display='block';
+}
+function swt(t){$('f-li').style.display=t==='login'?'block':'none';$('f-rg').style.display=t==='register'?'block':'none';$('t-li').classList.toggle('active',t==='login');$('t-rg').classList.toggle('active',t==='register');fmsgH('auth-msg')}
+function reqAuth(cb){if(ME)cb();else om('m-auth')}
+function goApp(p){$('vl').style.display='none';$('va').style.display='block';sp(p)}
+
+async function afterLogin(){
+  const ini=ME.name.charAt(0).toUpperCase();
+  ['t-av','sb-av'].forEach(id=>$(id)&&($(id).textContent=ini));
+  $('t-un').textContent=ME.name.split(' ')[0];$('sb-nm').textContent=ME.name;
+  $('sb-role').textContent=ME.role==='admin'?'Administrateur':'Client';
+  $('dash-fn').textContent=ME.name.split(' ')[0];
+  buildSb();$('vl').style.display='none';$('va').style.display='block';
+  if(ME.role==='admin'){sp('panel-admin-home');loadAdmData();loadAdmOrds();}
+  else{sp('panel-dashboard');await loadClientData();fillOrderForm();if(Notification.permission==='default')$('push-banner').classList.add('show');}
+}
+
+function buildSb(){
+  const A=ME.role==='admin';
+  $('sb-nav').innerHTML=A?`<span class="ng-lbl">Administration</span>
+    <button class="ni active" onclick="sp('panel-admin-home')"><span class="ic">📊</span>Vue d'ensemble</button>
+    <button class="ni" onclick="sp('panel-admin-orders')"><span class="ic">📋</span>Commandes</button>
+    <button class="ni" onclick="sp('panel-admin-clients')"><span class="ic">👥</span>Clients</button>
+    <button class="ni" onclick="sp('panel-messages')"><span class="ic">💬</span>Messagerie</button>
+    <span class="ng-lbl">Compte</span>
+    <button class="ni" onclick="sp('panel-profile')"><span class="ic">⚙️</span>Paramètres</button>`
+  :`<span class="ng-lbl">Espace client</span>
+    <button class="ni active" onclick="sp('panel-dashboard')"><span class="ic">🏠</span>Tableau de bord</button>
+    <button class="ni" onclick="sp('panel-projects')"><span class="ic">🎬</span>Mes projets</button>
+    <button class="ni" onclick="sp('panel-order')"><span class="ic">➕</span>Commander</button>
+    <button class="ni" onclick="sp('panel-catalogue')"><span class="ic">📁</span>Catalogue</button>
+    <span class="ng-lbl">Communication</span>
+    <button class="ni" onclick="sp('panel-messages')"><span class="ic">💬</span>Messages</button>
+    <button class="ni" onclick="sp('panel-invoices')"><span class="ic">🧾</span>Factures</button>
+    <span class="ng-lbl">Compte</span>
+    <button class="ni" onclick="sp('panel-profile')"><span class="ic">⚙️</span>Paramètres</button>`;
+  $('mn-items').innerHTML=A?`<button class="mni active" onclick="sp('panel-admin-home')"><span class="mico">📊</span>Stats</button><button class="mni" onclick="sp('panel-admin-orders')"><span class="mico">📋</span>Ordres</button><button class="mni" onclick="sp('panel-messages')"><span class="mico">💬</span>Msgs</button><button class="mni" onclick="sp('panel-profile')"><span class="mico">⚙️</span>Profil</button>`
+  :`<button class="mni active" onclick="sp('panel-dashboard')"><span class="mico">🏠</span>Accueil</button><button class="mni" onclick="sp('panel-projects')"><span class="mico">🎬</span>Projets</button><button class="mni cmd" onclick="sp('panel-order')">+</button><button class="mni" onclick="sp('panel-messages')"><span class="mico">💬</span>Chat</button><button class="mni" onclick="sp('panel-profile')"><span class="mico">👤</span>Profil</button>`;
+}
+
+async function loadClientData(){
+  ORDS=await(await af('/api/orders')).json();
+  const prog=ORDS.filter(o=>['in_progress','shooting','editing','review'].includes(o.status)).length;
+  const done=ORDS.filter(o=>['completed','delivered'].includes(o.status)).length;
+  const wait=ORDS.filter(o=>o.status==='pending').length;
+  const spent=ORDS.reduce((a,o)=>a+(o.budget||0),0);
+  $('cl-stats').innerHTML=`<div class="sc" onclick="sp('panel-projects')"><div class="lbl">En cours</div><div class="val">${prog}</div><div class="sub">Actifs</div></div><div class="sc" onclick="sp('panel-projects')"><div class="lbl">En attente</div><div class="val">${wait}</div><div class="sub">Devis</div></div><div class="sc" onclick="sp('panel-projects')"><div class="lbl">Terminés</div><div class="val">${done}</div><div class="sub">Livrés</div></div><div class="sc" onclick="sp('panel-invoices')"><div class="lbl">Budget total</div><div class="val" style="font-size:20px">${fmt(spent)}</div><div class="sub">MAD</div></div>`;
+  renderDashPg();renderAllPg();
+}
+
+function pcCard(o,i){const hasF=o.files&&o.files.length>0;return `<div class="pc" onclick="showOrd(${o.id})">
+  <div class="pt ${PC[i%4]}"><div class="pt-ov"><div class="pt-title">${esc(o.title)}${hasF?`<div style="font-size:10px;color:var(--gold-lt);margin-top:2px">📎 ${o.files.length} fichier(s)</div>`:''}</div></div></div>
+  <div class="pb"><div class="pm"><span class="badge ${SC[o.status]||'bp'}">${SL[o.status]||o.status}</span><span style="font-size:10px;color:var(--tx3)">${esc(o.reference||'—')}</span></div>
+  <div class="pp-lbl"><span>${esc(o.service?.name||'—')}</span><span>${o.progress}%</span></div>
+  <div class="prog"><div class="prog-f" style="width:${o.progress}%"></div></div>
+  <div class="pact"><button class="btn btn-dark btn-sm" onclick="event.stopPropagation();openChat(${o.id},'${esc(o.reference||o.title)}')">💬</button><button class="btn btn-dark btn-sm" onclick="event.stopPropagation();dlInvoice(${o.id})">🧾 PDF</button></div></div></div>`;}
+
+function renderDashPg(){const r=ORDS.slice(0,6);$('dash-pg').innerHTML=r.length?r.map((o,i)=>pcCard(o,i)).join(''):`<div class="es" style="grid-column:1/-1"><div class="ei">🎬</div><h3>Aucun projet</h3><p>Lancez votre premier projet CINEMAWAY !</p><button class="btn btn-gold btn-sm" onclick="sp('panel-order')">Commander →</button></div>`;}
+function renderAllPg(){$('all-pg').innerHTML=ORDS.length?ORDS.map((o,i)=>pcCard(o,i)).join(''):`<div class="es" style="grid-column:1/-1"><div class="ei">🎬</div><h3>Aucun projet</h3></div>`;}
+
+async function loadSvcs(){SVCS=await(await af('/api/services')).json();}
+function svcH(s,i,oc){return `<div class="svc-card" onclick="${oc}"><div class="svc-th ${TC[i%6]}">${CI[s.category]||'🎬'}</div><div class="svc-b"><div class="svc-cat">${CI[s.category]||''} ${CL[s.category]||s.category}</div><div class="svc-name">${esc(s.name)}</div><p class="svc-desc">${esc(s.description||'')}</p><div class="svc-price"><strong>${fmt(s.price_min)}–${fmt(s.price_max)} MAD</strong>${s.duration?`<span style="font-size:10px;color:var(--tx3)">${esc(s.duration)}</span>`:''}</div></div></div>`;}
+function renderLandSvcs(){$('land-svcs').innerHTML=SVCS.slice(0,6).map((s,i)=>svcH(s,i,`reqAuth(()=>{goApp('panel-order');setTimeout(()=>{$('of-svc').value='${s.id}';updEst()},150)})`)).join('');}
+function renderCat(cat){const l=cat==='all'?SVCS:SVCS.filter(s=>s.category===cat);$('cat-sg').innerHTML=l.length?l.map((s,i)=>svcH(s,i,`sp('panel-order');setTimeout(()=>{$('of-svc').value='${s.id}';updEst()},150)`)).join(''):`<div class="es" style="grid-column:1/-1"><div class="ei">📁</div><p>Aucun service dans cette catégorie</p></div>`;}
+function fCat(btn){document.querySelectorAll('#cat-btns button').forEach(b=>b.className='btn btn-dark btn-sm');btn.className='btn btn-gold btn-sm';renderCat(btn.dataset.cat);}
+
+function fillOrderForm(){const s=$('of-svc');if(!s)return;s.innerHTML='<option value="">— Sélectionner un service —</option>';SVCS.forEach(sv=>s.innerHTML+=`<option value="${sv.id}" data-min="${sv.price_min}" data-max="${sv.price_max}">${esc(sv.name)}</option>`);}
+function selType(btn){document.querySelectorAll('.tybtn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');const s=$('of-svc');s.innerHTML='<option value="">— Sélectionner —</option>';SVCS.filter(sv=>sv.category===btn.dataset.cat).forEach(sv=>s.innerHTML+=`<option value="${sv.id}" data-min="${sv.price_min}" data-max="${sv.price_max}">${esc(sv.name)}</option>`);$('pest').style.display='none';}
+function updEst(){const s=$('of-svc'),o=s.options[s.selectedIndex],pe=$('pest');if(o&&o.dataset.min){pe.style.display='block';$('est-rng').textContent=`${parseInt(o.dataset.min).toLocaleString()}–${parseInt(o.dataset.max).toLocaleString()} MAD`;}else pe.style.display='none';}
+
+async function submitOrder(){
+  const sid=parseInt(val('of-svc')),ttl=val('of-ttl').trim();
+  if(!sid||!ttl){fmsg('order-msg','Sélectionnez un service et saisissez un titre.','err');return}
+  const btn=$('submit-btn');btn.textContent='Envoi…';btn.disabled=true;fmsgH('order-msg');
+  const r=await af('/api/orders',{method:'POST',body:JSON.stringify({service_id:sid,title:ttl,description:val('of-dsc'),budget:parseInt(val('of-bdg'))||null,deadline:val('of-ddl')||null})});
+  const d=await r.json();btn.textContent='Envoyer le brief →';btn.disabled=false;
+  if(r.ok){
+    fmsg('order-msg',`✅ Commande ${d.order.reference} créée ! Notre équipe vous contacte sous 24h.`,'ok');
+    if(_pf.length){const fd=new FormData();_pf.forEach(f=>fd.append('files',f));await fetch(`/api/orders/${d.order.id}/files`,{method:'POST',body:fd});toast(`${_pf.length} fichier(s) uploadé(s) ✓`,'ok');_pf=[];renderFpWrap();}
+    ['of-ttl','of-dsc','of-bdg','of-ddl'].forEach(id=>$(id)&&($(id).value=''));document.querySelectorAll('.tybtn').forEach(b=>b.classList.remove('sel'));
+    await loadClientData();setTimeout(()=>{fmsgH('order-msg');sp('panel-dashboard')},3000);
+  } else fmsg('order-msg',d.error||'Erreur création commande','err');
+}
+
+function addFiles(files){for(const f of files)if(!_pf.find(p=>p.name===f.name&&p.size===f.size))_pf.push(f);renderFpWrap();}
+function onDragOver(e){e.preventDefault();$('upload-zone').classList.add('drag')}
+function onDragLeave(){$('upload-zone').classList.remove('drag')}
+function onDrop(e){e.preventDefault();$('upload-zone').classList.remove('drag');addFiles(e.dataTransfer.files)}
+function rmFile(i){_pf.splice(i,1);renderFpWrap()}
+function renderFpWrap(){$('fp-wrap').innerHTML=_pf.map((f,i)=>`<div class="fp-i"><span>${ficon(f.type)}</span><div style="flex:1;min-width:0"><div class="fp-nm">${esc(f.name)}</div><div style="font-size:9px;color:var(--tx3)">${fsize(f.size)}</div></div><button class="fp-rm" onclick="rmFile(${i})">✕</button></div>`).join('');}
+
+async function uploadToOrder(oid,files){
+  if(!files||!files.length)return;
+  const fd=new FormData();for(const f of files)fd.append('files',f);
+  toast('Upload en cours…','info');
+  const r=await fetch(`/api/orders/${oid}/files`,{method:'POST',body:fd});
+  const d=await r.json();
+  if(r.ok){toast(`${d.uploaded.length} fichier(s) uploadé(s) ✓`,'ok');showOrd(oid);}
+  else toast(d.error||'Erreur upload','err');
+}
+async function delFile(oid,fid){
+  if(!confirm('Supprimer ce fichier ?'))return;
+  const r=await af(`/api/orders/${oid}/files/${fid}`,{method:'DELETE'});
+  if(r.ok){toast('Fichier supprimé','ok');showOrd(oid);}else toast('Erreur','err');
+}
+
+async function showOrd(oid){
+  const o=await(await af(`/api/orders/${oid}`)).json();
+  if(o.error){toast(o.error,'err');return}
+  const fH=(o.files&&o.files.length)?`<div style="margin:15px 0"><div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:9px">📎 Fichiers (${o.files.length})</div><div class="files-g">${o.files.map(f=>`<div class="file-card"><a href="${esc(f.url)}" target="_blank"><div class="fc-ico">${f.file_type==='image'?'🖼️':f.file_type==='video'?'🎬':'📄'}</div><div class="fc-name">${esc(f.original_name)}</div><div class="fc-size">${fsize(f.size)}</div></a><button class="fc-del" onclick="delFile(${oid},${f.id})">✕</button></div>`).join('')}</div></div>`:'';
+  $('m-order-c').innerHTML=`<div style="font-size:9px;color:var(--gold);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:5px">Détail commande</div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:19px;font-weight:400;margin-bottom:3px">${esc(o.title)}</h2>
+    <p style="font-size:11px;color:var(--tx3);margin-bottom:15px">${esc(o.reference||'')} · ${esc(o.service?.name||'')}</p>
+    <div style="display:flex;align-items:center;gap:11px;margin-bottom:13px"><span class="badge ${SC[o.status]||'bp'}">${SL[o.status]||o.status}</span><span style="font-size:12px;color:var(--tx3)">${o.progress}%</span></div>
+    <div class="prog" style="margin-bottom:15px"><div class="prog-f" style="width:${o.progress}%"></div></div>
+    ${o.description?`<p style="font-size:13px;color:var(--tx2);line-height:1.75;margin-bottom:14px">${esc(o.description)}</p>`:''}
+    ${o.notes_admin?`<div style="background:var(--bg3);border:1px solid var(--brd-g);border-radius:var(--r);padding:13px;font-size:13px;margin-bottom:14px;line-height:1.7"><b style="color:var(--gold)">📝 Note équipe :</b><br>${esc(o.notes_admin)}</div>`:''}
+    ${fH}
+    <div style="margin:14px 0"><div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--tx2);margin-bottom:8px">Ajouter des fichiers</div>
+    <div class="uz" style="padding:13px" onclick="$('d-fi').click()"><p style="font-size:12px">Cliquez pour ajouter des fichiers</p></div>
+    <input type="file" id="d-fi" multiple accept="image/*,video/*,.pdf" style="display:none" onchange="uploadToOrder(${oid},this.files)"></div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:15px;padding-top:14px;border-top:1px solid var(--brd)">
+      <button class="btn btn-dark btn-sm" onclick="cm('m-order');openChat(${oid},'${esc(o.reference||'')}')">💬 Chat</button>
+      <button class="btn btn-dark btn-sm" onclick="dlInvoice(${oid})">↓ Facture PDF</button>
+      <button class="btn btn-dark btn-sm" onclick="sendInvEmail(${oid})">📧 Email facture</button>
+      <button class="btn btn-dark btn-sm" onclick="cm('m-order')">Fermer</button>
+    </div>`;
+  om('m-order');
+}
+
+async function dlInvoice(oid){
+  toast('Génération PDF…','info');
+  try{const r=await fetch(`/api/orders/${oid}/invoice`);if(!r.ok){const d=await r.json();toast(d.error||'Erreur PDF','err');return}
+  const blob=await r.blob();const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`Facture_CINEMAWAY_${oid}.pdf`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);toast('Facture téléchargée ✓','ok');}catch{toast('Erreur réseau','err')}
+}
+async function sendInvEmail(oid){
+  toast('Envoi email…','info');const r=await af(`/api/orders/${oid}/invoice/send`,{method:'POST'});const d=await r.json();toast(d.message||(r.ok?'Envoyé':'Erreur'),r.ok?'ok':'err');
+}
+async function loadInvs(){
+  const ords=await(await af('/api/orders')).json();
+  if(!ords.length){$('inv-list').innerHTML='<div class="es"><div class="ei">🧾</div><h3>Aucune commande</h3><p>Vos factures apparaîtront ici</p></div>';return}
+  $('inv-list').innerHTML=ords.map(o=>`<div class="ii"><div><div style="font-size:13px;font-weight:400">${esc(o.reference||'—')} — ${esc(o.title)}</div><div style="font-size:11px;color:var(--tx3);margin-top:2px">${(o.created_at||'').slice(0,10)} · <span class="badge ${SC[o.status]||'bp'}">${SL[o.status]||o.status}</span></div></div><div class="ii-acts"><span class="ii-amt">${fmt(o.budget)} MAD</span><button class="btn btn-dark btn-sm" onclick="dlInvoice(${o.id})">↓ PDF</button><button class="btn btn-dark btn-sm" onclick="sendInvEmail(${o.id})">📧</button></div></div>`).join('');
+}
+
+async function loadMsgsList(){
+  const ords=await(await af('/api/orders')).json();
+  $('cl-items').innerHTML=ords.length?ords.map(o=>`<div class="ci" id="ci-${o.id}" onclick="openChat(${o.id},'${esc(o.reference||o.title)}')"><div class="ci-ref">${esc(o.reference||'—')}</div><div class="ci-prev">${ME.role==='admin'?esc(o.client?.name||'')+' — ':''}${esc(o.title)}</div></div>`).join(''):'<div style="padding:14px;font-size:12px;color:var(--tx3)">Aucun projet</div>';
+}
+function openChat(oid,ref){if(!$('panel-messages').classList.contains('active'))sp('panel-messages');CHAT_OID=oid;$('chat-ttl').textContent=ref||`Projet #${oid}`;document.querySelectorAll('.ci').forEach(c=>c.classList.remove('act'));const ci=$(`ci-${oid}`);if(ci)ci.classList.add('act');fetchChat(oid);}
+async function fetchChat(oid){
+  const msgs=await(await af(`/api/orders/${oid}/messages`)).json();const c=$('chat-cm');
+  if(!msgs.length){c.innerHTML='<div class="es"><div class="ei">💬</div><p>Démarrez la conversation !</p></div>';return}
+  c.innerHTML=msgs.map(m=>`<div class="cmsg ${m.sender.id===ME.id?'mine':''}"><div class="cbub">${esc(m.content)}</div><div class="ctime">${esc(m.sender.name)} · ${(m.created_at||'').slice(0,16).replace('T',' ')}</div></div>`).join('');
+  c.scrollTop=c.scrollHeight;
+}
+async function sndMsg(){const inp=$('chat-in'),c=inp.value.trim();if(!c||!CHAT_OID)return;const r=await af(`/api/orders/${CHAT_OID}/messages`,{method:'POST',body:JSON.stringify({content:c})});if(r.ok){inp.value='';fetchChat(CHAT_OID);}}
+
+
+function fillProfile(){
+  const m={'nm':'name','em':'email','ph':'phone','co':'company'};Object.entries(m).forEach(([k,v])=>{const e=$(`pf-${k}`);if(e)e.value=ME[v]||''});
+  $('pf-dt').textContent=(ME.created_at||'').slice(0,10)||'—';$('pf-nb').textContent=ORDS.length;
+  if(Notification.permission==='granted'&&$('push-btn')){$('push-btn').textContent='✅ Notifications activées';$('push-btn').className='btn btn-green btn-sm btn-full';}
+}
+async function saveProfile(){
+  const r=await af('/api/auth/update',{method:'PUT',body:JSON.stringify({name:val('pf-nm'),phone:val('pf-ph'),company:val('pf-co'),password:val('pf-pw')})});
+  const d=await r.json();
+  if(r.ok){ME=d.user;fmsg('pf-msg','✅ Profil mis à jour.','ok');const e=$('t-un');if(e)e.textContent=ME.name.split(' ')[0];}
+  else fmsg('pf-msg',d.error||'Erreur','err');
+}
+
+async function askPush(){
+  if(!('Notification' in window)){toast('Notifications non supportées','err');return}
+  const p=await Notification.requestPermission();
+  if(p==='granted'){toast('Notifications activées ✓','ok');$('push-banner').classList.remove('show');if($('push-btn')){$('push-btn').textContent='✅ Notifications activées';$('push-btn').className='btn btn-green btn-sm btn-full';}
+    if('serviceWorker' in navigator){try{await navigator.serviceWorker.register('/static/sw.js');await af('/api/push/subscribe',{method:'POST',body:JSON.stringify({token:'cw-'+ME.id+'-'+Date.now()})});}catch(e){console.log('SW:',e)}}
+  } else toast('Permission refusée. Modifiez les paramètres du navigateur.','err');
+}
+
+async function loadAdmData(){
+  const s=await(await af('/api/admin/stats')).json();
+  $('adm-kpis').innerHTML=`<div class="ak"><div class="lbl">Commandes</div><div class="val">${s.total_orders}</div></div><div class="ak"><div class="lbl">En attente</div><div class="val">${s.pending}</div><div class="chg">devis</div></div><div class="ak"><div class="lbl">En cours</div><div class="val">${s.in_progress}</div><div class="chg up">↑</div></div><div class="ak"><div class="lbl">Terminées</div><div class="val">${s.completed}</div><div class="chg up">↑</div></div><div class="ak"><div class="lbl">Clients</div><div class="val">${s.total_clients}</div></div><div class="ak"><div class="lbl">Revenu MAD</div><div class="val" style="font-size:17px">${fmt(s.total_revenue)}</div><div class="chg up">Total</div></div>`;
+  renderAdmTbl('adm-recent',s.recent_orders,true);
+}
+async function loadAdmOrds(){
+  const ords=await(await af('/api/orders')).json();renderAdmTbl('adm-all',ords,false);
+  $('cl-items').innerHTML=ords.map(o=>`<div class="ci" id="ci-${o.id}" onclick="openChat(${o.id},'${esc(o.reference||o.title)}')"><div class="ci-ref">${esc(o.reference||'—')}</div><div class="ci-prev">${esc(o.client?.name||'')} — ${esc(o.title)}</div></div>`).join('');
+}
+function renderAdmTbl(tid,ords,short){
+  $(tid).innerHTML=ords.map(o=>`<tr><td>${esc(o.reference||'—')}</td><td>${esc(o.client?.name||'—')}</td><td style="color:var(--gold)">${esc(o.service?.name||'—')}</td>${!short?`<td style="max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(o.title)}</td>`:''}<td>${o.budget?fmt(o.budget)+' MAD':'—'}</td><td><span class="badge ${SC[o.status]||'bp'}">${SL[o.status]||o.status}</span></td><td><div class="prog" style="width:65px;display:inline-block"><div class="prog-f" style="width:${o.progress}%"></div></div><span style="font-size:10px;color:var(--tx3);margin-left:4px">${o.progress}%</span></td>${!short?`<td style="font-size:11px;color:var(--tx3)">${o.files?.length||0}</td>`:''}<td><div style="display:flex;gap:5px"><button class="btn btn-dark btn-sm" onclick="admEdit(${o.id})">Gérer</button><button class="btn btn-dark btn-sm" onclick="dlInvoice(${o.id})">PDF</button></div></td></tr>`).join('')||`<tr><td colspan="9" style="text-align:center;padding:26px;color:var(--tx3)">Aucune commande</td></tr>`;
+}
+async function loadAdmCli(){
+  const cs=await(await af('/api/admin/clients')).json();$('cl-cnt').textContent=`${cs.length} client(s)`;
+  $('adm-cli-tb').innerHTML=cs.map(c=>`<tr><td>${esc(c.name)}</td><td>${esc(c.email)}</td><td>${c.phone||'—'}</td><td>${c.company||'—'}</td><td>${(c.created_at||'').slice(0,10)}</td></tr>`).join('');
+}
+async function admEdit(id){
+  const o=await(await af(`/api/orders/${id}`)).json();if(o.error){toast(o.error,'err');return}
+  const opts=['pending','in_progress','review','completed','cancelled'].map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${SL[s]||s}</option>`).join('');
+  const fH=(o.files&&o.files.length)?`<div style="margin-bottom:14px"><div style="font-size:10px;color:var(--tx3);margin-bottom:7px">📎 Fichiers client (${o.files.length})</div><div style="display:flex;flex-wrap:wrap;gap:7px">${o.files.map(f=>`<a href="${esc(f.url)}" target="_blank" class="btn btn-dark btn-sm">${f.file_type==='image'?'🖼️':f.file_type==='video'?'🎬':'📄'} ${esc(f.original_name)}</a>`).join('')}</div></div>`:'';
+  $('m-order-c').innerHTML=`<div style="font-size:9px;color:var(--gold);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:5px">Gestion commande</div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:19px;font-weight:400;margin-bottom:3px">${esc(o.title)}</h2>
+    <p style="font-size:11px;color:var(--tx3);margin-bottom:17px">${esc(o.reference||'')} · ${esc(o.client?.name||'')} · ${esc(o.client?.email||'')}</p>
+    ${fH}<div class="g2" style="margin-bottom:14px"><div class="field"><label>Statut</label><select id="ed-st">${opts}</select></div><div class="field"><label>Avancement : <span id="ed-pv">${o.progress}%</span></label><input type="range" class="pslider" id="ed-pr" min="0" max="100" value="${o.progress}" oninput="$('ed-pv').textContent=this.value+'%'"></div></div>
+    <div class="field"><label>Note pour le client</label><textarea id="ed-nt" rows="3">${esc(o.notes_admin||'')}</textarea></div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:7px;padding-top:14px;border-top:1px solid var(--brd)">
+      <button class="btn btn-gold btn-sm" onclick="saveAdmOrd(${id})">💾 Enregistrer</button>
+      <button class="btn btn-dark btn-sm" onclick="dlInvoice(${id})">↓ PDF</button>
+      <button class="btn btn-dark btn-sm" onclick="sendInvEmail(${id})">📧 Facture</button>
+      <button class="btn btn-dark btn-sm" onclick="cm('m-order');openChat(${id},'${esc(o.reference||'')}')">💬 Chat</button>
+      <button class="btn btn-dark btn-sm" onclick="cm('m-order')">Fermer</button>
+    </div>`;
+  om('m-order');
+}
+async function saveAdmOrd(id){
+  const r=await af(`/api/orders/${id}/status`,{method:'PUT',body:JSON.stringify({status:val('ed-st'),progress:parseInt($('ed-pr').value),notes_admin:val('ed-nt')})});
+  if(r.ok){cm('m-order');toast('Mise à jour enregistrée ✓','ok');loadAdmData();loadAdmOrds();}else toast('Erreur sauvegarde','err');
+}
+
+function sendContact(){
+  const nm=val('ct-nm'),em=val('ct-em'),msg=val('ct-msg');
+  if(!nm||!em||!msg){fmsg('ct-msg-out','Tous les champs sont requis.','err');return}
+  fmsg('ct-msg-out','✅ Message envoyé ! Nous vous répondrons sous 24h.','ok');
+  ['ct-nm','ct-em','ct-msg'].forEach(id=>$(id)&&($(id).value=''));
+  setTimeout(()=>fmsgH('ct-msg-out'),4500);
+}
+
+(async()=>{
+  await loadSvcs();renderLandSvcs();
+  $('btn-login').onclick=()=>om('m-auth');
+  const r=await af('/api/auth/me');
+  if(r.ok){ME=await r.json();await afterLogin();}
+})();
+</script>
+</body>
+</html>
