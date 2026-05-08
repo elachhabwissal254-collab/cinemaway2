@@ -947,11 +947,21 @@ async function loadAdmCli(){
 async function admEdit(id){
   const o=await(await af(`/api/orders/${id}`)).json();if(o.error){toast(o.error,'err');return}
   const opts=['pending','in_progress','review','completed','cancelled'].map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${SL[s]||s}</option>`).join('');
-  const fH=(o.files&&o.files.length)?`<div style="margin-bottom:14px"><div style="font-size:10px;color:var(--tx3);margin-bottom:7px">📎 Fichiers client (${o.files.length})</div><div style="display:flex;flex-wrap:wrap;gap:7px">${o.files.map(f=>`<a href="${esc(f.url)}" target="_blank" class="btn btn-dark btn-sm">${f.file_type==='image'?'🖼️':f.file_type==='video'?'🎬':'📄'} ${esc(f.original_name)}</a>`).join('')}</div></div>`:'';
+  const clientFiles=(o.files||[]).filter(f=>!f.is_deliverable);
+  const delivFiles=(o.files||[]).filter(f=>f.is_deliverable);
+  const fH=clientFiles.length?`<div style="margin-bottom:14px"><div style="font-size:10px;color:var(--tx3);margin-bottom:7px">📎 Fichiers client (${clientFiles.length})</div><div style="display:flex;flex-wrap:wrap;gap:7px">${clientFiles.map(f=>`<a href="${esc(f.url)}" target="_blank" class="btn btn-dark btn-sm">${f.file_type==='image'?'🖼️':f.file_type==='video'?'🎬':'📄'} ${esc(f.filename||f.original_name||'fichier')}</a>`).join('')}</div></div>`:'';
+  const delivH=`<div style="margin-bottom:14px;border:1px solid var(--gold);border-radius:var(--r);padding:13px">
+    <div style="font-size:10px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:9px">📦 Livrables admin (${delivFiles.length})</div>
+    ${delivFiles.length?`<div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px">${delivFiles.map(f=>`<div style="display:flex;align-items:center;gap:5px;background:var(--bg3);border-radius:6px;padding:4px 8px;font-size:12px"><a href="${esc(f.url)}" target="_blank" style="color:var(--gold);text-decoration:none">${f.file_type==='image'?'🖼️':f.file_type==='video'?'🎬':'📄'} ${esc(f.filename||f.original_name||'fichier')}</a><span style="color:var(--tx3);font-size:10px">${f.size_kb||0} KB</span><button onclick="delFile(${o.id},${f.id})" style="background:none;border:none;color:var(--tx3);cursor:pointer;font-size:11px;padding:0 2px" title="Supprimer">✕</button></div>`).join('')}</div>`:`<div style="font-size:12px;color:var(--tx3);margin-bottom:8px">Aucun livrable ajouté</div>`}
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px">
+      <input type="file" id="deliv-input" multiple accept=".mp4,.mov,.avi,.mkv,.pdf,.zip,.rar,.doc,.docx,.png,.jpg,.jpeg" style="font-size:11px;color:var(--tx2);flex:1;min-width:0" onchange="$('deliv-btn').textContent='📤 Uploader ('+this.files.length+' fichier'+(this.files.length>1?'s':'')+')'">
+      <button id="deliv-btn" class="btn btn-gold btn-sm" onclick="uploadDeliverables(${o.id})">📤 Uploader livrable(s)</button>
+    </div>
+  </div>`;
   $('m-order-c').innerHTML=`<div style="font-size:9px;color:var(--gold);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:5px">Gestion commande</div>
     <h2 style="font-family:'Playfair Display',serif;font-size:19px;font-weight:400;margin-bottom:3px">${esc(o.title)}</h2>
     <p style="font-size:11px;color:var(--tx3);margin-bottom:17px">${esc(o.reference||'')} · ${esc(o.client?.name||'')} · ${esc(o.client?.email||'')}</p>
-    ${fH}<div class="g2" style="margin-bottom:14px"><div class="field"><label>Statut</label><select id="ed-st">${opts}</select></div><div class="field"><label>Avancement : <span id="ed-pv">${o.progress}%</span></label><input type="range" class="pslider" id="ed-pr" min="0" max="100" value="${o.progress}" oninput="$('ed-pv').textContent=this.value+'%'"></div></div>
+    ${fH}${delivH}<div class="g2" style="margin-bottom:14px"><div class="field"><label>Statut</label><select id="ed-st">${opts}</select></div><div class="field"><label>Avancement : <span id="ed-pv">${o.progress}%</span></label><input type="range" class="pslider" id="ed-pr" min="0" max="100" value="${o.progress}" oninput="$('ed-pv').textContent=this.value+'%'"></div></div>
     <div class="field"><label>Note pour le client</label><textarea id="ed-nt" rows="3">${esc(o.notes_admin||'')}</textarea></div>
     <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:7px;padding-top:14px;border-top:1px solid var(--brd)">
       <button class="btn btn-gold btn-sm" onclick="saveAdmOrd(${id})">💾 Enregistrer</button>
@@ -965,6 +975,19 @@ async function admEdit(id){
 async function saveAdmOrd(id){
   const r=await af(`/api/orders/${id}/status`,{method:'PUT',body:JSON.stringify({status:val('ed-st'),progress:parseInt($('ed-pr').value),notes_admin:val('ed-nt')})});
   if(r.ok){cm('m-order');toast('Mise à jour enregistrée ✓','ok');loadAdmData();loadAdmOrds();}else toast('Erreur sauvegarde','err');
+}
+async function uploadDeliverables(orderId){
+  const input=$('deliv-input');
+  if(!input||!input.files.length){toast('Sélectionnez au moins un fichier','err');return;}
+  const btn=$('deliv-btn');
+  btn.disabled=true;btn.textContent='⏳ Upload en cours…';
+  const fd=new FormData();
+  for(const f of input.files)fd.append('files',f);
+  fd.append('is_deliverable','true');
+  const r=await fetch(`/api/orders/${orderId}/files`,{method:'POST',credentials:'include',body:fd});
+  const data=await r.json();
+  if(r.ok){toast(`✅ ${data.files.length} livrable(s) uploadé(s) avec succès`,'ok');cm('m-order');admEdit(orderId);}
+  else{toast(data.error||'Erreur upload','err');btn.disabled=false;btn.textContent='📤 Uploader livrable(s)';}
 }
 
 function sendContact(){
