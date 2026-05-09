@@ -1000,12 +1000,43 @@ async function admEdit(id){
       <button class="btn btn-dark btn-sm" onclick="sendInvEmail(${id})">📧 Facture</button>
       <button class="btn btn-dark btn-sm" onclick="cm('m-order');openChat(${id},'${esc(o.reference||'')}')">💬 Chat</button>
       <button class="btn btn-dark btn-sm" onclick="cm('m-order')">Fermer</button>
+    </div>
+    <div style="margin-top:16px;padding:14px;border:1px solid var(--brd);border-radius:var(--r);background:var(--bg2)">
+      <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:11px">💳 Paiement</div>
+      <div id="pay-status-${id}" style="font-size:12px;color:var(--tx3);margin-bottom:11px">Chargement…</div>
+      <div class="g2" style="margin-bottom:10px">
+        <div class="field"><label>Montant (MAD)</label><input type="number" id="pay-amt" value="${o.budget||0}" min="0"></div>
+        <div class="field"><label>Méthode</label><select id="pay-mth"><option value="virement">Virement</option><option value="cash">Cash</option><option value="carte">Carte</option></select></div>
+      </div>
+      <button class="btn btn-gold btn-sm" onclick="markPaid(${id})">✅ Marquer comme payé</button>
     </div>`;
   om('m-order');
+  loadPayStatus(id);
 }
 async function saveAdmOrd(id){
   const r=await af(`/api/orders/${id}/status`,{method:'PUT',body:JSON.stringify({status:val('ed-st'),progress:parseInt($('ed-pr').value),notes_admin:val('ed-nt')})});
   if(r.ok){cm('m-order');toast('Mise à jour enregistrée ✓','ok');loadAdmData();loadAdmOrds();}else toast('Erreur sauvegarde','err');
+}
+async function loadPayStatus(oid){
+  try{
+    const txns=await(await af(`/api/orders/${oid}/transactions`)).json();
+    const el=document.getElementById('pay-status-'+oid);if(!el)return;
+    if(!txns||!txns.length){el.innerHTML='<span style="color:var(--tx3)">Aucun paiement enregistré</span>';return;}
+    const paid=txns.filter(t=>t.status==='paid');
+    const total=paid.reduce((s,t)=>s+t.amount,0);
+    el.innerHTML=paid.length
+      ?`<span style="color:#4caf50;font-weight:500">✅ Payé — ${fmt(total)} MAD</span> <span style="color:var(--tx3);font-size:11px">(${paid.length} transaction(s))</span>`
+      :'<span style="color:#e6a817;font-weight:500">⏳ En attente de paiement</span>';
+  }catch(e){console.log('payStatus err',e);}
+}
+async function markPaid(oid){
+  const amt=parseFloat(document.getElementById('pay-amt').value);
+  const mth=document.getElementById('pay-mth').value;
+  if(!amt||amt<=0){toast('Montant invalide','err');return;}
+  const r=await af(`/api/orders/${oid}/pay`,{method:'POST',body:JSON.stringify({amount:amt,method:mth})});
+  const d=await r.json();
+  if(r.ok){toast('Paiement enregistré ✓','ok');loadPayStatus(oid);loadAdmData();}
+  else toast(d.error||'Erreur','err');
 }
 async function uploadDeliverables(orderId){
   const input=$('deliv-input');
