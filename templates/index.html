@@ -656,7 +656,6 @@ footer{background:var(--bg2);border-top:1px solid var(--brd);padding:64px 52px 3
         <div id="adm-rev-list"></div>
       </div>
 
-
       <!-- Profile -->
       <div class="panel" id="panel-profile">
         <h2 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:400;margin-bottom:20px">Paramètres du compte</h2>
@@ -979,11 +978,21 @@ async function loadAdmCli(){
 async function admEdit(id){
   const o=await(await af(`/api/orders/${id}`)).json();if(o.error){toast(o.error,'err');return}
   const opts=['pending','in_progress','review','completed','cancelled'].map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${SL[s]||s}</option>`).join('');
-  const fH=(o.files&&o.files.length)?`<div style="margin-bottom:14px"><div style="font-size:10px;color:var(--tx3);margin-bottom:7px">📎 Fichiers client (${o.files.length})</div><div style="display:flex;flex-wrap:wrap;gap:7px">${o.files.map(f=>`<a href="${esc(f.url)}" target="_blank" class="btn btn-dark btn-sm">${f.file_type==='image'?'🖼️':f.file_type==='video'?'🎬':'📄'} ${esc(f.original_name)}</a>`).join('')}</div></div>`:'';
+  const clientFiles=(o.files||[]).filter(f=>!f.is_deliverable);
+  const delivFiles=(o.files||[]).filter(f=>f.is_deliverable);
+  const fH=clientFiles.length?`<div style="margin-bottom:14px"><div style="font-size:10px;color:var(--tx3);margin-bottom:7px">📎 Fichiers client (${clientFiles.length})</div><div style="display:flex;flex-wrap:wrap;gap:7px">${clientFiles.map(f=>`<a href="${esc(f.url)}" target="_blank" class="btn btn-dark btn-sm">${f.file_type==='image'?'🖼️':f.file_type==='video'?'🎬':'📄'} ${esc(f.filename||f.original_name||'fichier')}</a>`).join('')}</div></div>`:'';
+  const delivH=`<div style="margin-bottom:14px;border:1px solid var(--gold);border-radius:var(--r);padding:13px">
+    <div style="font-size:10px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:9px">📦 Livrables admin (${delivFiles.length})</div>
+    ${delivFiles.length?`<div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px">${delivFiles.map(f=>`<div style="display:flex;align-items:center;gap:5px;background:var(--bg3);border-radius:6px;padding:4px 8px;font-size:12px"><a href="${esc(f.url)}" target="_blank" style="color:var(--gold);text-decoration:none">${f.file_type==='image'?'🖼️':f.file_type==='video'?'🎬':'📄'} ${esc(f.filename||f.original_name||'fichier')}</a><span style="color:var(--tx3);font-size:10px">${f.size_kb||0} KB</span><button onclick="delFile(${o.id},${f.id})" style="background:none;border:none;color:var(--tx3);cursor:pointer;font-size:11px;padding:0 2px" title="Supprimer">✕</button></div>`).join('')}</div>`:`<div style="font-size:12px;color:var(--tx3);margin-bottom:8px">Aucun livrable ajouté</div>`}
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px">
+      <input type="file" id="deliv-input" multiple accept=".mp4,.mov,.avi,.mkv,.pdf,.zip,.rar,.doc,.docx,.png,.jpg,.jpeg" style="font-size:11px;color:var(--tx2);flex:1;min-width:0" onchange="$('deliv-btn').textContent='📤 Uploader ('+this.files.length+' fichier'+(this.files.length>1?'s':'')+')'">
+      <button id="deliv-btn" class="btn btn-gold btn-sm" onclick="uploadDeliverables(${o.id})">📤 Uploader livrable(s)</button>
+    </div>
+  </div>`;
   $('m-order-c').innerHTML=`<div style="font-size:9px;color:var(--gold);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:5px">Gestion commande</div>
     <h2 style="font-family:'Playfair Display',serif;font-size:19px;font-weight:400;margin-bottom:3px">${esc(o.title)}</h2>
     <p style="font-size:11px;color:var(--tx3);margin-bottom:17px">${esc(o.reference||'')} · ${esc(o.client?.name||'')} · ${esc(o.client?.email||'')}</p>
-    ${fH}<div class="g2" style="margin-bottom:14px"><div class="field"><label>Statut</label><select id="ed-st">${opts}</select></div><div class="field"><label>Avancement : <span id="ed-pv">${o.progress}%</span></label><input type="range" class="pslider" id="ed-pr" min="0" max="100" value="${o.progress}" oninput="$('ed-pv').textContent=this.value+'%'"></div></div>
+    ${fH}${delivH}<div class="g2" style="margin-bottom:14px"><div class="field"><label>Statut</label><select id="ed-st">${opts}</select></div><div class="field"><label>Avancement : <span id="ed-pv">${o.progress}%</span></label><input type="range" class="pslider" id="ed-pr" min="0" max="100" value="${o.progress}" oninput="$('ed-pv').textContent=this.value+'%'"></div></div>
     <div class="field"><label>Note pour le client</label><textarea id="ed-nt" rows="3">${esc(o.notes_admin||'')}</textarea></div>
     <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:7px;padding-top:14px;border-top:1px solid var(--brd)">
       <button class="btn btn-gold btn-sm" onclick="saveAdmOrd(${id})">💾 Enregistrer</button>
@@ -998,27 +1007,45 @@ async function saveAdmOrd(id){
   const r=await af(`/api/orders/${id}/status`,{method:'PUT',body:JSON.stringify({status:val('ed-st'),progress:parseInt($('ed-pr').value),notes_admin:val('ed-nt')})});
   if(r.ok){cm('m-order');toast('Mise à jour enregistrée ✓','ok');loadAdmData();loadAdmOrds();}else toast('Erreur sauvegarde','err');
 }
+async function uploadDeliverables(orderId){
+  const input=$('deliv-input');
+  if(!input||!input.files.length){toast('Sélectionnez au moins un fichier','err');return;}
+  const btn=$('deliv-btn');
+  btn.disabled=true;btn.textContent='⏳ Upload en cours…';
+  const fd=new FormData();
+  for(const f of input.files)fd.append('files',f);
+  fd.append('is_deliverable','true');
+  const r=await fetch(`/api/orders/${orderId}/files`,{method:'POST',credentials:'include',body:fd});
+  const data=await r.json();
+  if(r.ok){toast(`✅ ${data.files.length} livrable(s) uploadé(s) avec succès`,'ok');cm('m-order');admEdit(orderId);}
+  else{toast(data.error||'Erreur upload','err');btn.disabled=false;btn.textContent='📤 Uploader livrable(s)';}
+}
 
+function sendContact(){
+  const nm=val('ct-nm'),em=val('ct-em'),msg=val('ct-msg');
+  if(!nm||!em||!msg){fmsg('ct-msg-out','Tous les champs sont requis.','err');return}
+  fmsg('ct-msg-out','✅ Message envoyé ! Nous vous répondrons sous 24h.','ok');
+  ['ct-nm','ct-em','ct-msg'].forEach(id=>$(id)&&($(id).value=''));
+  setTimeout(()=>fmsgH('ct-msg-out'),4500);
+}
 
 /* ── REVIEWS ── */
-let _revStars = 0;
-let _revOid = null;
+let _revStars=0,_revOid=null;
 
-function starsHtml(rating, interactive, prefix){
+function starsHtml(rating,interactive,prefix){
   return [1,2,3,4,5].map(i=>`<span class="star" id="${prefix}-s${i}" ${interactive?`onclick="setRevStar(${i})" onmouseover="hoverStar(${i},'${prefix}')" onmouseout="hoverStar(_revStars,'${prefix}')"`:''}>${i<=rating?'⭐':'☆'}</span>`).join('');
 }
 function hoverStar(n,prefix){[1,2,3,4,5].forEach(i=>{const el=$(`${prefix}-s${i}`);if(el)el.textContent=i<=n?'⭐':'☆'});}
 function setRevStar(n){_revStars=n;hoverStar(n,'rf');}
 
-function openReviewForm(oid, ref){
-  _revOid=oid; _revStars=0;
+function openReviewForm(oid,ref){
+  _revOid=oid;_revStars=0;
   sp('panel-reviews');
-  const z=$('rev-form-zone');
-  z.innerHTML=`<div class="rev-form">
+  $('rev-form-zone').innerHTML=`<div class="rev-form">
     <h4>⭐ Évaluer : ${esc(ref)}</h4>
     <div id="rev-form-msg" class="fmsg"></div>
     <div style="font-size:11px;color:var(--tx3);margin-bottom:7px">Votre note *</div>
-    <div class="star-sel" id="rf-stars">${starsHtml(0,true,'rf')}</div>
+    <div class="star-sel">${starsHtml(0,true,'rf')}</div>
     <div class="field"><label>Commentaire</label><textarea id="rev-comment" rows="3" placeholder="Partagez votre expérience avec l'équipe CINEMAWAY…"></textarea></div>
     <div style="display:flex;gap:9px">
       <button class="btn btn-gold btn-sm" onclick="submitReview()">Publier l'avis →</button>
@@ -1030,44 +1057,37 @@ function openReviewForm(oid, ref){
 
 async function submitReview(){
   if(!_revStars){fmsg('rev-form-msg','Veuillez sélectionner une note.','err');return;}
-  const comment=val('rev-comment');
-  const r=await af(`/api/orders/${_revOid}/review`,{method:'POST',body:JSON.stringify({rating:_revStars,comment})});
+  const r=await af(`/api/orders/${_revOid}/review`,{method:'POST',body:JSON.stringify({rating:_revStars,comment:val('rev-comment')})});
   const d=await r.json();
-  if(r.ok){
-    toast('Avis publié ✓','ok');
-    $('rev-form-zone').innerHTML='';
-    _revOid=null; _revStars=0;
-    loadReviews();
-  } else fmsg('rev-form-msg',d.error||'Erreur','err');
+  if(r.ok){toast('Avis publié ✓','ok');$('rev-form-zone').innerHTML='';_revOid=null;_revStars=0;loadReviews();}
+  else fmsg('rev-form-msg',d.error||'Erreur','err');
 }
 
 async function loadReviews(){
   const ords=await(await af('/api/orders')).json();
-  const completed=ords.filter(o=>o.status==='completed'||o.status==='delivered');
   const existing=await(await af('/api/reviews')).json();
-  const myRevIds=new Set(existing.filter(r=>r.client?.id===ME.id).map(r=>r.order_id));
-  const eligible=completed.filter(o=>!myRevIds.has(o.id));
+  const myRevOids=new Set(existing.filter(r=>r.client?.id===ME.id).map(r=>r.order_id));
+  const eligible=ords.filter(o=>(o.status==='completed'||o.status==='delivered')&&!myRevOids.has(o.id));
   let html='';
   if(eligible.length&&!_revOid){
-    html+=`<div style="background:var(--gold-dim);border:1px solid var(--brd-g);border-radius:var(--r);padding:12px 16px;margin-bottom:18px;font-size:13px;color:var(--gold)">💡 Vous avez <b>${eligible.length}</b> projet(s) livré(s) en attente d'évaluation. Cliquez sur un projet ci-dessous pour laisser un avis.</div>
+    html+=`<div style="background:var(--gold-dim);border:1px solid var(--brd-g);border-radius:var(--r);padding:12px 16px;margin-bottom:18px;font-size:13px;color:var(--gold)">💡 <b>${eligible.length}</b> projet(s) livré(s) en attente d'évaluation.</div>
     ${eligible.map(o=>`<div class="rev-card" style="cursor:pointer;border-color:var(--brd-g)" onclick="openReviewForm(${o.id},'${esc(o.reference||o.title)}')">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <div><div style="font-size:13px;font-weight:400">${esc(o.title)}</div><div style="font-size:11px;color:var(--tx3)">${esc(o.reference||'—')}</div></div>
+        <div><div style="font-size:13px">${esc(o.title)}</div><div style="font-size:11px;color:var(--tx3)">${esc(o.reference||'—')}</div></div>
         <button class="btn btn-gold btn-sm">⭐ Évaluer</button>
       </div></div>`).join('')}
     <hr style="border:none;border-top:1px solid var(--brd);margin:20px 0">`;
   }
   const myRevs=existing.filter(r=>r.client?.id===ME.id);
   if(!myRevs.length&&!eligible.length){
-    $('rev-list').innerHTML=`<div class="es"><div class="ei">⭐</div><h3>Aucun avis</h3><p>Vos avis apparaîtront ici après la livraison de vos projets.</p></div>`;
-    if(html)$('rev-list').insertAdjacentHTML('beforebegin',html);
+    $('rev-list').innerHTML='<div class="es"><div class="ei">⭐</div><h3>Aucun avis</h3><p>Vos avis apparaîtront ici après livraison de vos projets.</p></div>';
     return;
   }
   if(myRevs.length){
     html+=`<div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:12px">Vos avis publiés</div>`;
     html+=myRevs.map(r=>`<div class="rev-card">
       <div class="rev-stars">${starsHtml(r.rating,false,'rv'+r.id)}</div>
-      <div style="font-size:13px;color:var(--tx)">${esc(r.comment||'')}</div>
+      ${r.comment?`<div class="rev-comment">${esc(r.comment)}</div>`:''}
       <div class="rev-meta">${(r.created_at||'').slice(0,10)}</div>
     </div>`).join('');
   }
@@ -1076,31 +1096,20 @@ async function loadReviews(){
 
 async function loadAdmReviews(){
   const revs=await(await af('/api/reviews')).json();
-  if(!revs.length){
-    $('adm-rev-list').innerHTML=`<div class="es"><div class="ei">⭐</div><h3>Aucun avis</h3><p>Les avis clients apparaîtront ici.</p></div>`;
-    return;
-  }
+  if(!revs.length){$('adm-rev-list').innerHTML='<div class="es"><div class="ei">⭐</div><h3>Aucun avis</h3><p>Les avis clients apparaîtront ici.</p></div>';return;}
   const avg=(revs.reduce((s,r)=>s+r.rating,0)/revs.length).toFixed(1);
-  const dist=[5,4,3,2,1].map(n=>{const c=revs.filter(r=>r.rating===n).length;return {n,c,pct:Math.round(c/revs.length*100)};});
+  const dist=[5,4,3,2,1].map(n=>{const c=revs.filter(r=>r.rating===n).length;return{n,c,pct:Math.round(c/revs.length*100)};});
   $('adm-rev-summary').innerHTML=`
     <div class="ak" style="text-align:center;min-width:110px"><div class="lbl">Note moyenne</div><div class="val" style="font-size:30px;color:var(--gold)">${avg}</div><div style="font-size:11px;color:var(--tx3);margin-top:3px">${revs.length} avis</div></div>
     <div class="ak" style="flex:1;min-width:200px"><div class="lbl" style="margin-bottom:10px">Répartition</div>${dist.map(d=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px"><span style="font-size:11px;color:var(--tx3);width:14px">${d.n}</span><div style="flex:1;height:6px;background:var(--bg4);border-radius:3px;overflow:hidden"><div style="width:${d.pct}%;height:100%;background:var(--gold);border-radius:3px"></div></div><span style="font-size:11px;color:var(--tx3);width:24px">${d.c}</span></div>`).join('')}</div>`;
   $('adm-rev-list').innerHTML=revs.map(r=>`<div class="rev-card">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px">
-      <div><div style="font-size:13px;font-weight:400;color:var(--tx)">${esc(r.client?.name||'—')}</div><div style="font-size:11px;color:var(--tx3)">${esc(r.client?.company||'')}</div></div>
+      <div><div style="font-size:13px;color:var(--tx)">${esc(r.client?.name||'—')}</div><div style="font-size:11px;color:var(--tx3)">${esc(r.client?.company||'')}</div></div>
       <div class="rev-stars">${starsHtml(r.rating,false,'ar'+r.id)}</div>
     </div>
     ${r.comment?`<div class="rev-comment">${esc(r.comment)}</div>`:''}
     <div class="rev-meta">${(r.created_at||'').slice(0,10)}</div>
   </div>`).join('');
-}
-
-function sendContact(){
-  const nm=val('ct-nm'),em=val('ct-em'),msg=val('ct-msg');
-  if(!nm||!em||!msg){fmsg('ct-msg-out','Tous les champs sont requis.','err');return}
-  fmsg('ct-msg-out','✅ Message envoyé ! Nous vous répondrons sous 24h.','ok');
-  ['ct-nm','ct-em','ct-msg'].forEach(id=>$(id)&&($(id).value=''));
-  setTimeout(()=>fmsgH('ct-msg-out'),4500);
 }
 
 (async()=>{
